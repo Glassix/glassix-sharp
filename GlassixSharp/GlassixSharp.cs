@@ -21,7 +21,7 @@ namespace GlassixSharp
         private static readonly HttpClient _httpClient;
         private readonly string _baseUrl;
         private readonly GlassixCredentials _credentials;
-        
+
         private static readonly ConcurrentDictionary<string, (string Token, DateTime ExpiresAt)> _tokens = new ConcurrentDictionary<string, (string, DateTime)>();
         private static readonly SemaphoreSlim _tokenSemaphore = new SemaphoreSlim(1, 1);
 
@@ -39,7 +39,7 @@ namespace GlassixSharp
         {
             _credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
             _baseUrl = $"https://{_credentials.WorkspaceName}.glassix.com/api/v1.2";
-            
+
             if (_credentials.TimeoutSeconds > 0)
             {
                 _httpClient.Timeout = TimeSpan.FromSeconds(_credentials.TimeoutSeconds);
@@ -54,12 +54,12 @@ namespace GlassixSharp
         private async Task<string> GetTokenAsync(CancellationToken cancellationToken = default)
         {
             var tokenKey = $"{_credentials.WorkspaceName}:{_credentials.ApiKey}:{_credentials.UserName}";
-            
+
             if (_tokens.TryGetValue(tokenKey, out var tokenInfo) && DateTime.UtcNow < tokenInfo.ExpiresAt.AddMinutes(-5))
                 return tokenInfo.Token;
 
             await _tokenSemaphore.WaitAsync(cancellationToken);
-            
+
             try
             {
                 // Double-check after acquiring the semaphore
@@ -74,20 +74,20 @@ namespace GlassixSharp
                 };
 
                 var response = await SendRequestAsync<TokenResponse>(
-                    HttpMethod.Post, 
-                    $"{_baseUrl}/token/get", 
-                    request, 
-                    false, 
+                    HttpMethod.Post,
+                    $"{_baseUrl}/token/get",
+                    request,
+                    false,
                     cancellationToken);
-                
-                if (response.Success)
+
+                if (response.IsSuccess)
                 {
                     var expiresAt = DateTime.UtcNow.AddSeconds(response.Data.ExpiresIn);
                     _tokens[tokenKey] = (response.Data.AccessToken, expiresAt);
                     return response.Data.AccessToken;
                 }
-                
-                throw new Exception($"Failed to obtain token: {response.Error}");
+
+                throw new Exception($"Failed to obtain token: {response.ErrorMessage}");
             }
             finally
             {
@@ -106,16 +106,16 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>API response</returns>
         private async Task<ApiResponse<T>> SendRequestAsync<T>(
-            HttpMethod method, 
-            string url, 
-            object body = null, 
+            HttpMethod method,
+            string url,
+            object body = null,
             bool requiresAuth = true,
             CancellationToken cancellationToken = default)
         {
             try
             {
                 var request = new HttpRequestMessage(method, url);
-                
+
                 if (requiresAuth)
                 {
                     var token = await GetTokenAsync(cancellationToken);
@@ -128,25 +128,25 @@ namespace GlassixSharp
                     {
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     });
-                    
+
                     request.Content = new StringContent(json, Encoding.UTF8, "application/json");
                 }
 
                 var response = await _httpClient.SendAsync(request, cancellationToken);
                 var content = await response.Content.ReadAsStringAsync();
-                
+
                 if (response.IsSuccessStatusCode)
                 {
                     if (typeof(T) == typeof(EmptyResponse))
                     {
                         return ApiResponse<T>.Success((T)(object)new EmptyResponse());
                     }
-                    
+
                     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                     var result = JsonSerializer.Deserialize<T>(content, options);
                     return ApiResponse<T>.Success(result);
                 }
-                
+
                 string errorMessage;
                 try
                 {
@@ -157,7 +157,7 @@ namespace GlassixSharp
                 {
                     errorMessage = content;
                 }
-                
+
                 return ApiResponse<T>.Error(errorMessage, (int)response.StatusCode);
             }
             catch (Exception ex)
@@ -175,16 +175,16 @@ namespace GlassixSharp
         {
             if (parameters == null || parameters.Count == 0)
                 return string.Empty;
-                
+
             var queryParams = new List<string>();
-            
+
             foreach (var param in parameters)
             {
                 if (param.Value == null)
                     continue;
-                
+
                 string stringValue;
-                
+
                 if (param.Value is DateTime dateTime)
                 {
                     stringValue = dateTime.ToString("dd/MM/yyyy HH:mm:ss:ff");
@@ -201,18 +201,18 @@ namespace GlassixSharp
                 {
                     stringValue = param.Value.ToString();
                 }
-                
+
                 if (!string.IsNullOrEmpty(stringValue))
                 {
                     queryParams.Add($"{Uri.EscapeDataString(param.Key)}={Uri.EscapeDataString(stringValue)}");
                 }
             }
-            
+
             return string.Join("&", queryParams);
         }
 
         #region API Methods
-        
+
         // Tickets
 
         /// <summary>
@@ -222,17 +222,17 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The created ticket</returns>
         public async Task<(bool Success, TicketResponse Data, string Error)> CreateTicketAsync(
-            CreateTicketRequest request, 
+            CreateTicketRequest request,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<TicketResponse>(
-                HttpMethod.Post, 
-                $"{_baseUrl}/tickets/create", 
-                request, 
-                true, 
+                HttpMethod.Post,
+                $"{_baseUrl}/tickets/create",
+                request,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         /// <summary>
@@ -242,17 +242,17 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The requested ticket</returns>
         public async Task<(bool Success, TicketResponse Data, string Error)> GetTicketAsync(
-            int ticketId, 
+            int ticketId,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<TicketResponse>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/tickets/get/{ticketId}", 
-                null, 
-                true, 
+                HttpMethod.Get,
+                $"{_baseUrl}/tickets/get/{ticketId}",
+                null,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         /// <summary>
@@ -266,9 +266,9 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of tickets matching the criteria</returns>
         public async Task<(bool Success, TicketListResponse Data, string Error)> ListTicketsAsync(
-            DateTime since, 
-            DateTime until, 
-            TicketState? ticketState = null, 
+            DateTime since,
+            DateTime until,
+            TicketState? ticketState = null,
             SortOrder? sortOrder = null,
             string page = null,
             CancellationToken cancellationToken = default)
@@ -278,30 +278,30 @@ namespace GlassixSharp
                 ["since"] = since,
                 ["until"] = until
             };
-            
+
             if (ticketState.HasValue)
                 queryParams["ticketState"] = ticketState.Value;
-            
+
             if (sortOrder.HasValue)
                 queryParams["sortOrder"] = sortOrder.Value;
-            
+
             if (!string.IsNullOrEmpty(page))
                 queryParams["page"] = page;
-            
+
             var queryString = BuildQueryString(queryParams);
             var url = $"{_baseUrl}/tickets/list";
-            
+
             if (!string.IsNullOrEmpty(queryString))
                 url += $"?{queryString}";
-            
+
             var response = await SendRequestAsync<TicketListResponse>(
-                HttpMethod.Get, 
-                url, 
-                null, 
-                true, 
+                HttpMethod.Get,
+                url,
+                null,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         /// <summary>
@@ -312,18 +312,18 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The message transaction</returns>
         public async Task<(bool Success, TransactionResponse Data, string Error)> SendMessageAsync(
-            int ticketId, 
-            SendMessageRequest request, 
+            int ticketId,
+            SendMessageRequest request,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<TransactionResponse>(
-                HttpMethod.Post, 
-                $"{_baseUrl}/tickets/send/{ticketId}", 
-                request, 
-                true, 
+                HttpMethod.Post,
+                $"{_baseUrl}/tickets/send/{ticketId}",
+                request,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         /// <summary>
@@ -338,9 +338,9 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
         public async Task<(bool Success, MessageResponse Data, string Error)> SetTicketStateAsync(
-            int ticketId, 
-            TicketState nextState, 
-            bool getTicket = false, 
+            int ticketId,
+            TicketState nextState,
+            bool getTicket = false,
             bool sendTicketStateChangedMessage = true,
             bool enableWebhook = true,
             SetTicketStateRequest body = null,
@@ -353,18 +353,18 @@ namespace GlassixSharp
                 ["sendTicketStateChangedMessage"] = sendTicketStateChangedMessage,
                 ["enableWebhook"] = enableWebhook
             };
-            
+
             var queryString = BuildQueryString(queryParams);
             var url = $"{_baseUrl}/tickets/setstate/{ticketId}?{queryString}";
-            
+
             var response = await SendRequestAsync<MessageResponse>(
-                HttpMethod.Put, 
-                url, 
-                body, 
-                true, 
+                HttpMethod.Put,
+                url,
+                body,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         /// <summary>
@@ -375,18 +375,18 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
         public async Task<(bool Success, EmptyResponse Data, string Error)> SetTicketFieldsAsync(
-            int ticketId, 
-            SetTicketFieldsRequest request, 
+            int ticketId,
+            SetTicketFieldsRequest request,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<EmptyResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/tickets/setfields/{ticketId}", 
-                request, 
-                true, 
+                HttpMethod.Put,
+                $"{_baseUrl}/tickets/setfields/{ticketId}",
+                request,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         /// <summary>
@@ -397,18 +397,18 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The updated list of tags</returns>
         public async Task<(bool Success, List<string> Data, string Error)> AddTicketTagsAsync(
-            int ticketId, 
-            List<string> tags, 
+            int ticketId,
+            List<string> tags,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<List<string>>(
-                HttpMethod.Post, 
-                $"{_baseUrl}/tickets/addtags/{ticketId}", 
-                tags, 
-                true, 
+                HttpMethod.Post,
+                $"{_baseUrl}/tickets/addtags/{ticketId}",
+                tags,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         /// <summary>
@@ -419,18 +419,18 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The updated list of tags</returns>
         public async Task<(bool Success, List<string> Data, string Error)> RemoveTicketTagAsync(
-            int ticketId, 
-            string tag, 
+            int ticketId,
+            string tag,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<List<string>>(
-                HttpMethod.Delete, 
-                $"{_baseUrl}/tickets/removetag/{ticketId}?tag={Uri.EscapeDataString(tag)}", 
-                null, 
-                true, 
+                HttpMethod.Delete,
+                $"{_baseUrl}/tickets/removetag/{ticketId}?tag={Uri.EscapeDataString(tag)}",
+                null,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         // Users
@@ -444,13 +444,13 @@ namespace GlassixSharp
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<List<User>>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/users/allusers", 
-                null, 
-                true, 
+                HttpMethod.Get,
+                $"{_baseUrl}/users/allusers",
+                null,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         /// <summary>
@@ -460,17 +460,17 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
         public async Task<(bool Success, EmptyResponse Data, string Error)> SetUserStatusAsync(
-            UserStatus nextStatus, 
+            UserStatus nextStatus,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<EmptyResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/users/setstatus", 
-                new { nextStatus = nextStatus.ToString() }, 
-                true, 
+                HttpMethod.Put,
+                $"{_baseUrl}/users/setstatus",
+                new { nextStatus = nextStatus.ToString() },
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         /// <summary>
@@ -482,13 +482,13 @@ namespace GlassixSharp
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<UserStatusResponse>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/users/getstatus", 
-                null, 
-                true, 
+                HttpMethod.Get,
+                $"{_baseUrl}/users/getstatus",
+                null,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         // Contacts
@@ -500,17 +500,17 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The requested contact</returns>
         public async Task<(bool Success, Contact Data, string Error)> GetContactAsync(
-            Guid contactId, 
+            Guid contactId,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<Contact>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/contacts/get/{contactId}", 
-                null, 
-                true, 
+                HttpMethod.Get,
+                $"{_baseUrl}/contacts/get/{contactId}",
+                null,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         /// <summary>
@@ -521,18 +521,18 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
         public async Task<(bool Success, MessageResponse Data, string Error)> SetContactNameAsync(
-            Guid contactId, 
-            string nextName, 
+            Guid contactId,
+            string nextName,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<MessageResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/contacts/setname/{contactId}", 
-                new { nextName }, 
-                true, 
+                HttpMethod.Put,
+                $"{_baseUrl}/contacts/setname/{contactId}",
+                new { nextName },
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         // Protocol
@@ -544,17 +544,17 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The sent message</returns>
         public async Task<(bool Success, SendProtocolMessageResponse Data, string Error)> SendProtocolMessageAsync(
-            SendProtocolMessageRequest request, 
+            SendProtocolMessageRequest request,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<SendProtocolMessageResponse>(
-                HttpMethod.Post, 
-                $"{_baseUrl}/protocols/send", 
-                request, 
-                true, 
+                HttpMethod.Post,
+                $"{_baseUrl}/protocols/send",
+                request,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         // Webhooks
@@ -566,605 +566,17 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of webhook events</returns>
         public async Task<(bool Success, List<WebhookEvent> Data, string Error)> GetWebhookEventsAsync(
-            bool deleteEvents = true, 
+            bool deleteEvents = true,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<List<WebhookEvent>>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/webhooks/getevents?deleteEvents={deleteEvents.ToString().ToLower()}", 
-                null, 
-                true, 
+                HttpMethod.Get,
+                $"{_baseUrl}/webhooks/getevents?deleteEvents={deleteEvents.ToString().ToLower()}",
+                null,
+                true,
                 cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
 
-        #endregion
-    }
-}etId, 
-            string nextState, 
-            bool getTicket = false, 
-            bool sendTicketStateChangedMessage = true,
-            bool enableWebhook = true,
-            SetTicketStateRequest body = null,
-            CancellationToken cancellationToken = default)
-        {
-            var queryParams = new Dictionary<string, object>
-            {
-                ["nextState"] = nextState,
-                ["getTicket"] = getTicket.ToString().ToLower(),
-                ["sendTicketStateChangedMessage"] = sendTicketStateChangedMessage.ToString().ToLower(),
-                ["enableWebhook"] = enableWebhook.ToString().ToLower()
-            };
-            
-            var queryString = BuildQueryString(BuildQueryParams(queryParams));
-            var url = $"{_baseUrl}/tickets/setstate/{ticketId}?{queryString}";
-            
-            var response = await SendRequestAsync<MessageResponse>(
-                HttpMethod.Put, 
-                url, 
-                body, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, EmptyResponse Data, string Error)> SetTicketFieldsAsync(
-            int ticketId, 
-            SetTicketFieldsRequest request, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<EmptyResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/tickets/setfields/{ticketId}", 
-                request, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, List<string> Data, string Error)> AddTicketTagsAsync(
-            int ticketId, 
-            List<string> tags, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<List<string>>(
-                HttpMethod.Post, 
-                $"{_baseUrl}/tickets/addtags/{ticketId}", 
-                tags, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, List<string> Data, string Error)> RemoveTicketTagAsync(
-            int ticketId, 
-            string tag, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<List<string>>(
-                HttpMethod.Delete, 
-                $"{_baseUrl}/tickets/removetag/{ticketId}?tag={Uri.EscapeDataString(tag)}", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Users
-
-        public async Task<(bool Success, List<User> Data, string Error)> GetAllUsersAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<List<User>>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/users/allusers", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, EmptyResponse Data, string Error)> SetUserStatusAsync(
-            string nextStatus, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<EmptyResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/users/setstatus", 
-                new { nextStatus }, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, UserStatusResponse Data, string Error)> GetUserStatusAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<UserStatusResponse>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/users/getstatus", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Contacts
-
-        public async Task<(bool Success, Contact Data, string Error)> GetContactAsync(
-            Guid contactId, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<Contact>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/contacts/get/{contactId}", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, MessageResponse Data, string Error)> SetContactNameAsync(
-            Guid contactId, 
-            string nextName, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<MessageResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/contacts/setname/{contactId}", 
-                new { nextName }, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Protocol
-
-        public async Task<(bool Success, SendProtocolMessageResponse Data, string Error)> SendProtocolMessageAsync(
-            SendProtocolMessageRequest request, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<SendProtocolMessageResponse>(
-                HttpMethod.Post, 
-                $"{_baseUrl}/protocols/send", 
-                request, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Webhooks
-
-        public async Task<(bool Success, List<WebhookEvent> Data, string Error)> GetWebhookEventsAsync(
-            bool deleteEvents = true, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<List<WebhookEvent>>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/webhooks/getevents?deleteEvents={deleteEvents.ToString().ToLower()}", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        #endregion
-    }
-}
-        }
-
-        // Users
-
-        public async Task<(bool Success, List<User> Data, string Error)> GetAllUsersAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<List<User>>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/users/allusers", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, EmptyResponse Data, string Error)> SetUserStatusAsync(
-            string nextStatus, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<EmptyResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/users/setstatus", 
-                new { nextStatus }, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, UserStatusResponse Data, string Error)> GetUserStatusAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<UserStatusResponse>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/users/getstatus", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Contacts
-
-        public async Task<(bool Success, Contact Data, string Error)> GetContactAsync(
-            Guid contactId, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<Contact>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/contacts/get/{contactId}", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, MessageResponse Data, string Error)> SetContactNameAsync(
-            Guid contactId, 
-            string nextName, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<MessageResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/contacts/setname/{contactId}", 
-                new { nextName }, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Protocol
-
-        public async Task<(bool Success, SendProtocolMessageResponse Data, string Error)> SendProtocolMessageAsync(
-            SendProtocolMessageRequest request, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<SendProtocolMessageResponse>(
-                HttpMethod.Post, 
-                $"{_baseUrl}/protocols/send", 
-                request, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Webhooks
-
-        public async Task<(bool Success, List<WebhookEvent> Data, string Error)> GetWebhookEventsAsync(
-            bool deleteEvents = true, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<List<WebhookEvent>>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/webhooks/getevents?deleteEvents={deleteEvents.ToString().ToLower()}", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        #endregion
-    }
-}
-        }
-
-        // Users
-
-        public async Task<(bool Success, List<User> Data, string Error)> GetAllUsersAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<List<User>>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/users/allusers", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, EmptyResponse Data, string Error)> SetUserStatusAsync(
-            string nextStatus, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<EmptyResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/users/setstatus", 
-                new { nextStatus }, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, UserStatusResponse Data, string Error)> GetUserStatusAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<UserStatusResponse>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/users/getstatus", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Contacts
-
-        public async Task<(bool Success, Contact Data, string Error)> GetContactAsync(
-            Guid contactId, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<Contact>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/contacts/get/{contactId}", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, MessageResponse Data, string Error)> SetContactNameAsync(
-            Guid contactId, 
-            string nextName, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<MessageResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/contacts/setname/{contactId}", 
-                new { nextName }, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Protocol
-
-        public async Task<(bool Success, SendProtocolMessageResponse Data, string Error)> SendProtocolMessageAsync(
-            SendProtocolMessageRequest request, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<SendProtocolMessageResponse>(
-                HttpMethod.Post, 
-                $"{_baseUrl}/protocols/send", 
-                request, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Webhooks
-
-        public async Task<(bool Success, List<WebhookEvent> Data, string Error)> GetWebhookEventsAsync(
-            bool deleteEvents = true, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<List<WebhookEvent>>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/webhooks/getevents?deleteEvents={deleteEvents.ToString().ToLower()}", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        #endregion
-    }
-}
-
-        public async Task<(bool Success, EmptyResponse Data, string Error)> SetUserStatusAsync(
-            string nextStatus, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<EmptyResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/users/setstatus", 
-                new { nextStatus }, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, UserStatusResponse Data, string Error)> GetUserStatusAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<UserStatusResponse>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/users/getstatus", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Contacts
-
-        public async Task<(bool Success, Contact Data, string Error)> GetContactAsync(
-            Guid contactId, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<Contact>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/contacts/get/{contactId}", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        public async Task<(bool Success, MessageResponse Data, string Error)> SetContactNameAsync(
-            Guid contactId, 
-            string nextName, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<MessageResponse>(
-                HttpMethod.Put, 
-                $"{_baseUrl}/contacts/setname/{contactId}", 
-                new { nextName }, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Protocol
-
-        public async Task<(bool Success, SendProtocolMessageResponse Data, string Error)> SendProtocolMessageAsync(
-            SendProtocolMessageRequest request, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<SendProtocolMessageResponse>(
-                HttpMethod.Post, 
-                $"{_baseUrl}/protocols/send", 
-                request, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Webhooks
-
-        public async Task<(bool Success, List<WebhookEvent> Data, string Error)> GetWebhookEventsAsync(
-            bool deleteEvents = true, 
-            CancellationToken cancellationToken = default)
-        {
-            var response = await SendRequestAsync<List<WebhookEvent>>(
-                HttpMethod.Get, 
-                $"{_baseUrl}/webhooks/getevents?deleteEvents={deleteEvents.ToString().ToLower()}", 
-                null, 
-                true, 
-                cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        #endregion
-    }
-}
-com/api/v1.2/users/allusers";
-            var response = await GetAsync<List<User>>(url, cancellationToken: cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        /// <summary>
-        /// Sets the status of the current user
-        /// </summary>
-        public async Task<(bool Success, EmptyResponse Data, string Error)> SetUserStatusAsync(
-            string nextStatus, 
-            CancellationToken cancellationToken = default)
-        {
-            var url = $"https://{_workspaceName}.glassix.com/api/v1.2/users/setstatus";
-            var response = await PutAsync<EmptyResponse>(url, new { nextStatus }, cancellationToken: cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        /// <summary>
-        /// Gets the status of the current user
-        /// </summary>
-        public async Task<(bool Success, UserStatusResponse Data, string Error)> GetUserStatusAsync(
-            CancellationToken cancellationToken = default)
-        {
-            var url = $"https://{_workspaceName}.glassix.com/api/v1.2/users/getstatus";
-            var response = await GetAsync<UserStatusResponse>(url, cancellationToken: cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Contacts API
-
-        /// <summary>
-        /// Gets a contact by ID
-        /// </summary>
-        public async Task<(bool Success, Contact Data, string Error)> GetContactAsync(
-            Guid contactId, 
-            CancellationToken cancellationToken = default)
-        {
-            var url = $"https://{_workspaceName}.glassix.com/api/v1.2/contacts/get/{contactId}";
-            var response = await GetAsync<Contact>(url, cancellationToken: cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        /// <summary>
-        /// Sets the name of a contact
-        /// </summary>
-        public async Task<(bool Success, MessageResponse Data, string Error)> SetContactNameAsync(
-            Guid contactId, 
-            string nextName, 
-            CancellationToken cancellationToken = default)
-        {
-            var url = $"https://{_workspaceName}.glassix.com/api/v1.2/contacts/setname/{contactId}";
-            var response = await PutAsync<MessageResponse>(url, new { nextName }, cancellationToken: cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Protocol API
-
-        /// <summary>
-        /// Sends a message through a protocol (WhatsApp, SMS, etc.)
-        /// </summary>
-        public async Task<(bool Success, SendProtocolMessageResponse Data, string Error)> SendProtocolMessageAsync(
-            SendProtocolMessageRequest request, 
-            CancellationToken cancellationToken = default)
-        {
-            var url = $"https://{_workspaceName}.glassix.com/api/v1.2/protocols/send";
-            var response = await PostAsync<SendProtocolMessageResponse>(url, request, cancellationToken: cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
-        }
-
-        // Webhooks API
-
-        /// <summary>
-        /// Gets webhook events
-        /// </summary>
-        public async Task<(bool Success, List<WebhookEvent> Data, string Error)> GetWebhookEventsAsync(
-            bool deleteEvents = true, 
-            CancellationToken cancellationToken = default)
-        {
-            var url = $"https://{_workspaceName}.glassix.com/api/v1.2/webhooks/getevents?deleteEvents={deleteEvents.ToString().ToLower()}";
-            var response = await GetAsync<List<WebhookEvent>>(url, cancellationToken: cancellationToken);
-            
-            return (response.Success, response.Data, response.Error);
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
         #endregion
