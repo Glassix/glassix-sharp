@@ -5,7 +5,7 @@ namespace GlassixSharp.Models
     /// <summary>
     /// Credentials for authenticating with the Glassix API
     /// </summary>
-    public class GlassixCredentials
+    public class Credentials
     {
         /// <summary>
         /// The Glassix workspace name
@@ -40,7 +40,7 @@ namespace GlassixSharp.Models
         /// <param name="apiKey">The API key for authentication</param>
         /// <param name="apiSecret">The API secret for authentication</param>
         /// <param name="timeoutSeconds">Timeout for HTTP requests in seconds (default: 60 seconds)</param>
-        public GlassixCredentials(
+        public Credentials(
             string workspaceName, 
             string userName, 
             Guid apiKey, 

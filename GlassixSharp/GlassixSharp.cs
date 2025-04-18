@@ -20,7 +20,7 @@ namespace GlassixSharp
     {
         private static readonly HttpClient _httpClient;
         private readonly string _baseUrl;
-        private readonly GlassixCredentials _credentials;
+        private readonly Credentials _credentials;
 
         private static readonly ConcurrentDictionary<string, (string Token, DateTime ExpiresAt)> _tokens = new ConcurrentDictionary<string, (string, DateTime)>();
         private static readonly SemaphoreSlim _tokenSemaphore = new SemaphoreSlim(1, 1);
@@ -35,7 +35,7 @@ namespace GlassixSharp
         /// Creates a new instance of the GlassixSharp client
         /// </summary>
         /// <param name="credentials">The credentials to use for authentication</param>
-        public GlassixSharp(GlassixCredentials credentials)
+        public GlassixSharp(Credentials credentials)
         {
             _credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
             _baseUrl = $"https://{_credentials.WorkspaceName}.glassix.com/api/v1.2";
