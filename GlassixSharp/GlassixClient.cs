@@ -171,7 +171,7 @@ namespace GlassixSharp
         /// </summary>
         /// <param name="parameters">Dictionary of parameters</param>
         /// <returns>Query string</returns>
-        private string BuildQueryString(Dictionary<string, object> parameters)
+        private static string BuildQueryString(Dictionary<string, object> parameters)
         {
             if (parameters == null || parameters.Count == 0)
                 return string.Empty;
