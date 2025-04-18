@@ -68,10 +68,5 @@ namespace GlassixSharp.Models
             ApiSecret = apiSecret;
             TimeoutSeconds = timeoutSeconds;
         }
-        
-        /// <summary>
-        /// Gets a unique key to identify these credentials
-        /// </summary>
-        internal string GetUniqueKey() => $"{WorkspaceName}:{ApiKey}:{UserName}";
     }
 }
