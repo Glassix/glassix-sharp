@@ -58,7 +58,7 @@ namespace GlassixSharp
             if (_tokens.TryGetValue(tokenKey, out var tokenInfo) && DateTime.UtcNow < tokenInfo.ExpiresAt.AddMinutes(-5))
                 return tokenInfo.Token;
 
-            await _tokenSemaphore.WaitAsync(cancellationToken);
+            await _tokenSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
 
             try
             {
@@ -78,7 +78,7 @@ namespace GlassixSharp
                     $"{_baseUrl}/token/get",
                     request,
                     false,
-                    cancellationToken);
+                    cancellationToken).ConfigureAwait(false);
 
                 if (response.IsSuccess)
                 {
@@ -118,7 +118,7 @@ namespace GlassixSharp
 
                 if (requiresAuth)
                 {
-                    var token = await GetTokenAsync(cancellationToken);
+                    var token = await GetTokenAsync(cancellationToken).ConfigureAwait(false);
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
 
@@ -132,8 +132,8 @@ namespace GlassixSharp
                     request.Content = new StringContent(json, Encoding.UTF8, "application/json");
                 }
 
-                var response = await _httpClient.SendAsync(request, cancellationToken);
-                var content = await response.Content.ReadAsStringAsync();
+                var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -230,7 +230,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/tickets/create",
                 request,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -250,7 +250,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/tickets/get/{ticketId}",
                 null,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -299,7 +299,7 @@ namespace GlassixSharp
                 url,
                 null,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -321,7 +321,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/tickets/send/{ticketId}",
                 request,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -362,7 +362,7 @@ namespace GlassixSharp
                 url,
                 body,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -384,7 +384,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/tickets/setfields/{ticketId}",
                 request,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -406,7 +406,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/tickets/addtags/{ticketId}",
                 tags,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -428,7 +428,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/tickets/removetag/{ticketId}?tag={Uri.EscapeDataString(tag)}",
                 null,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -448,7 +448,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/users/allusers",
                 null,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -468,7 +468,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/users/setstatus",
                 new { nextStatus = nextStatus.ToString() },
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -486,7 +486,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/users/getstatus",
                 null,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -508,7 +508,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/contacts/get/{contactId}",
                 null,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -530,7 +530,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/contacts/setname/{contactId}",
                 new { nextName },
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -552,7 +552,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/protocols/send",
                 request,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
@@ -574,7 +574,7 @@ namespace GlassixSharp
                 $"{_baseUrl}/webhooks/getevents?deleteEvents={deleteEvents.ToString().ToLower()}",
                 null,
                 true,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
