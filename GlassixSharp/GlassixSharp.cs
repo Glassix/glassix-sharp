@@ -58,10 +58,10 @@ namespace GlassixSharp
             if (_tokens.TryGetValue(tokenKey, out var tokenInfo) && DateTime.UtcNow < tokenInfo.ExpiresAt.AddMinutes(-5))
                 return tokenInfo.Token;
 
-            await _tokenSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-
             try
             {
+                await _tokenSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+
                 // Double-check after acquiring the semaphore
                 if (_tokens.TryGetValue(tokenKey, out tokenInfo) && DateTime.UtcNow < tokenInfo.ExpiresAt.AddMinutes(-5))
                     return tokenInfo.Token;
