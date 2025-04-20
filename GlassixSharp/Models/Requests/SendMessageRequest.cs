@@ -10,32 +10,32 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Plain text message content
         /// </summary>
-        public string Text { get; set; }
+        public string text { get; set; }
         
         /// <summary>
         /// HTML message content
         /// </summary>
-        public string Html { get; set; }
+        public string html { get; set; }
         
         /// <summary>
         /// Quick replies to include with the message
         /// </summary>
-        public List<QuickReply> QuickReplies { get; set; }
+        public List<QuickReply> quickReplies { get; set; }
         
         /// <summary>
         /// Templates to include with the message
         /// </summary>
-        public List<Template> Templates { get; set; }
+        public List<Template> templates { get; set; }
         
         /// <summary>
         /// Files to attach to the message
         /// </summary>
-        public List<string> Files { get; set; }
+        public List<string> files { get; set; }
         
         /// <summary>
         /// Whether to enable free text input for web chat customers
         /// </summary>
-        public bool EnableFreeTextInput { get; set; } = false;
+        public bool enableFreeTextInput { get; set; } = false;
     }
     
     /// <summary>
@@ -46,12 +46,12 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Title of the quick reply button
         /// </summary>
-        public string Title { get; set; }
+        public string title { get; set; }
         
         /// <summary>
         /// Image URL for the quick reply button
         /// </summary>
-        public string ImageUrl { get; set; }
+        public string imageUrl { get; set; }
     }
     
     /// <summary>
@@ -62,32 +62,32 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Title of the template
         /// </summary>
-        public string Title { get; set; }
+        public string title { get; set; }
         
         /// <summary>
         /// Subtitle of the template
         /// </summary>
-        public string Subtitle { get; set; }
+        public string subtitle { get; set; }
         
         /// <summary>
         /// Cover image URL
         /// </summary>
-        public string CoverImageUrl { get; set; }
+        public string coverImageUrl { get; set; }
         
         /// <summary>
         /// Buttons to include in the template
         /// </summary>
-        public List<Button> Buttons { get; set; }
+        public List<Button> buttons { get; set; }
         
         /// <summary>
         /// HTML title (for web chat)
         /// </summary>
-        public string TitleHtml { get; set; }
+        public string titleHtml { get; set; }
         
         /// <summary>
         /// HTML subtitle (for web chat)
         /// </summary>
-        public string SubtitleHtml { get; set; }
+        public string subtitleHtml { get; set; }
     }
     
     /// <summary>
@@ -98,21 +98,21 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Title of the button
         /// </summary>
-        public string Title { get; set; }
+        public string title { get; set; }
         
         /// <summary>
         /// Type of button (text, web_url, postback, phone_number)
         /// </summary>
-        public string Type { get; set; }
+        public string type { get; set; }
         
         /// <summary>
         /// URI for web_url buttons
         /// </summary>
-        public string Uri { get; set; }
+        public string uri { get; set; }
         
         /// <summary>
         /// Custom data for postback buttons
         /// </summary>
-        public string Data { get; set; }
+        public string data { get; set; }
     }
 }

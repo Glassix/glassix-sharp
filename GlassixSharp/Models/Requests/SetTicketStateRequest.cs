@@ -10,11 +10,11 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Tags to add to the ticket
         /// </summary>
-        public List<string> Tags { get; set; }
+        public List<string> tags { get; set; }
         
         /// <summary>
         /// Summary to add to the ticket
         /// </summary>
-        public string Summary { get; set; }
+        public string summary { get; set; }
     }
 }

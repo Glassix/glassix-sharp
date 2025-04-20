@@ -12,111 +12,111 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Free text field for ticket subject
         /// </summary>
-        public string Field1 { get; set; }
+        public string field1 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field2 { get; set; }
+        public string field2 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field3 { get; set; }
+        public string field3 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field4 { get; set; }
+        public string field4 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field5 { get; set; }
+        public string field5 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field6 { get; set; }
+        public string field6 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field7 { get; set; }
+        public string field7 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field8 { get; set; }
+        public string field8 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field9 { get; set; }
+        public string field9 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field10 { get; set; }
+        public string field10 { get; set; }
         
         /// <summary>
         /// Culture code (e.g., "en-US")
         /// </summary>
-        public string Culture { get; set; }
+        public string culture { get; set; }
         
         /// <summary>
         /// Participants in the ticket
         /// </summary>
-        public List<Participant> Participants { get; set; }
+        public List<Participant> participants { get; set; }
         
         /// <summary>
         /// Tags for the ticket
         /// </summary>
-        public List<string> Tags { get; set; }
+        public List<string> tags { get; set; }
         
         /// <summary>
         /// Custom argument for CRM sync
         /// </summary>
-        public string UniqueArgument { get; set; }
+        public string uniqueArgument { get; set; }
         
         /// <summary>
         /// Ticket state
         /// </summary>
-        public Ticket.State State { get; set; }
+        public Ticket.State state { get; set; }
         
         /// <summary>
         /// When the ticket was opened
         /// </summary>
-        public DateTime? Open { get; set; }
+        public DateTime? open { get; set; }
         
         /// <summary>
         /// When the ticket was closed
         /// </summary>
-        public DateTime? Close { get; set; }
+        public DateTime? close { get; set; }
         
         /// <summary>
         /// Whether to assign the ticket to an available user
         /// </summary>
-        public bool GetAvailableUser { get; set; } = true;
+        public bool getAvailableUser { get; set; } = true;
         
         /// <summary>
         /// Whether to add an introduction message
         /// </summary>
-        public bool AddIntroductionMessage { get; set; } = true;
+        public bool addIntroductionMessage { get; set; } = true;
         
         /// <summary>
         /// Whether to enable webhook for this ticket
         /// </summary>
-        public bool EnableWebhook { get; set; } = true;
+        public bool enableWebhook { get; set; } = true;
         
         /// <summary>
         /// Whether to mark the ticket as read
         /// </summary>
-        public bool MarkAsRead { get; set; } = false;
+        public bool markAsRead { get; set; } = false;
         
         /// <summary>
         /// Additional details about the ticket
         /// </summary>
-        public Ticket.Details Details { get; set; }
+        public Ticket.Details details { get; set; }
     }
 }

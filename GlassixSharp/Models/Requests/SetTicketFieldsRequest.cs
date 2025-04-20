@@ -8,61 +8,61 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Free text field for ticket subject
         /// </summary>
-        public string Field1 { get; set; }
+        public string field1 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field2 { get; set; }
+        public string field2 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field3 { get; set; }
+        public string field3 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field4 { get; set; }
+        public string field4 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field5 { get; set; }
+        public string field5 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field6 { get; set; }
+        public string field6 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field7 { get; set; }
+        public string field7 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field8 { get; set; }
+        public string field8 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field9 { get; set; }
+        public string field9 { get; set; }
         
         /// <summary>
         /// Dynamic field
         /// </summary>
-        public string Field10 { get; set; }
+        public string field10 { get; set; }
         
         /// <summary>
         /// Custom argument for CRM sync
         /// </summary>
-        public string UniqueArgument { get; set; }
+        public string uniqueArgument { get; set; }
         
         /// <summary>
         /// Additional details about the ticket
         /// </summary>
-        public Ticket.Details Details { get; set; }
+        public Ticket.Details details { get; set; }
     }
 }
