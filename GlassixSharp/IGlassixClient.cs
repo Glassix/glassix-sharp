@@ -81,8 +81,8 @@ namespace GlassixSharp
             CancellationToken cancellationToken = default);
 
         // Protocol
-        Task<(bool Success, SendProtocolMessageResponse Data, string Error)> SendProtocolMessageAsync(
-            SendProtocolMessageRequest request,
+        Task<(bool Success, Message Data, string Error)> SendProtocolMessageAsync(
+            Message request,
             CancellationToken cancellationToken = default);
 
         // Webhooks

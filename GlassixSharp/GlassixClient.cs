@@ -562,11 +562,11 @@ namespace GlassixSharp
         /// <param name="request">The message to send</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The sent message</returns>
-        public async Task<(bool Success, SendProtocolMessageResponse Data, string Error)> SendProtocolMessageAsync(
-            SendProtocolMessageRequest request,
+        public async Task<(bool Success, Message Data, string Error)> SendProtocolMessageAsync(
+            Message request,
             CancellationToken cancellationToken = default)
         {
-            var response = await SendRequestAsync<SendProtocolMessageResponse>(
+            var response = await SendRequestAsync<Message>(
                 HttpMethod.Post,
                 $"{_baseUrl}/protocols/send",
                 request,
