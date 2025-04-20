@@ -40,7 +40,13 @@ namespace GlassixSharp
         public GlassixClient(Credentials credentials, Dictionary<string, string>? headers = null)
         {
             _credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
-            _baseUrl = $"https://{_credentials.WorkspaceName}.glassix.com/api/v1.2";
+
+            string glassixDomain = "glassix.com";
+            if (credentials.IsTestingEnvironment)
+            {
+                glassixDomain = "glassix-dev.com";
+            }
+            _baseUrl = $"https://{_credentials.WorkspaceName}.{glassixDomain}/api/v1.2";
 
             if (_credentials.TimeoutSeconds > 0)
             {

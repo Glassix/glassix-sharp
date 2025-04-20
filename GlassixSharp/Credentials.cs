@@ -31,6 +31,7 @@ namespace GlassixSharp.Models
         /// Timeout for HTTP requests in seconds (default: 60 seconds)
         /// </summary>
         public int TimeoutSeconds { get; }
+        public bool IsTestingEnvironment { get; }
 
         /// <summary>
         /// Creates a new instance of GlassixCredentials
@@ -45,7 +46,7 @@ namespace GlassixSharp.Models
             string userName, 
             Guid apiKey, 
             string apiSecret,
-            int timeoutSeconds = 60)
+            int timeoutSeconds = 60, bool isTestingEnvironment = false)
         {
             if (string.IsNullOrEmpty(workspaceName))
                 throw new ArgumentNullException(nameof(workspaceName));
@@ -67,6 +68,7 @@ namespace GlassixSharp.Models
             ApiKey = apiKey;
             ApiSecret = apiSecret;
             TimeoutSeconds = timeoutSeconds;
+            IsTestingEnvironment = isTestingEnvironment;
         }
     }
 }
