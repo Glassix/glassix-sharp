@@ -67,7 +67,7 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Participants in the ticket
         /// </summary>
-        public List<CreateTicketParticipant> Participants { get; set; }
+        public List<Participant> Participants { get; set; }
         
         /// <summary>
         /// Tags for the ticket
@@ -82,7 +82,7 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Ticket state
         /// </summary>
-        public string State { get; set; } = "Open";
+        public Ticket.State State { get; set; }
         
         /// <summary>
         /// When the ticket was opened
@@ -117,47 +117,6 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Additional details about the ticket
         /// </summary>
-        public TicketDetails Details { get; set; }
-    }
-    
-    /// <summary>
-    /// Participant to add to a new ticket
-    /// </summary>
-    public class CreateTicketParticipant
-    {
-        /// <summary>
-        /// Name of the participant
-        /// </summary>
-        public string Name { get; set; }
-        
-        /// <summary>
-        /// Protocol type (e.g., WhatsApp, SMS, Web)
-        /// </summary>
-        public ProtocolType ProtocolType { get; set; }
-        
-        /// <summary>
-        /// Sub-protocol type
-        /// </summary>
-        public string SubProtocolType { get; set; } = "Undefined";
-        
-        /// <summary>
-        /// Whether the participant is active
-        /// </summary>
-        public bool IsActive { get; set; } = true;
-        
-        /// <summary>
-        /// Whether the participant is deleted
-        /// </summary>
-        public bool IsDeleted { get; set; } = false;
-        
-        /// <summary>
-        /// Identifier for the participant (e.g., phone number, email)
-        /// </summary>
-        public string Identifier { get; set; }
-        
-        /// <summary>
-        /// Type of participant (Client or User)
-        /// </summary>
-        public string Type { get; set; } = "Client";
+        public Ticket.Details Details { get; set; }
     }
 }

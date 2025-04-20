@@ -25,7 +25,7 @@ namespace GlassixSharp
         Task<(bool Success, TicketListResponse Data, string Error)> ListTicketsAsync(
             DateTime since,
             DateTime until,
-            TicketState? ticketState = null,
+            Ticket.State? ticketState = null,
             SortOrder? sortOrder = null,
             string page = null,
             CancellationToken cancellationToken = default);
@@ -37,7 +37,7 @@ namespace GlassixSharp
 
         Task<(bool Success, MessageResponse Data, string Error)> SetTicketStateAsync(
             int ticketId,
-            TicketState nextState,
+            Ticket.State nextState,
             bool getTicket = false,
             bool sendTicketStateChangedMessage = true,
             bool enableWebhook = true,
@@ -64,7 +64,7 @@ namespace GlassixSharp
             CancellationToken cancellationToken = default);
 
         Task<(bool Success, string Error)> SetUserStatusAsync(
-            UserStatus nextStatus,
+            User.UserStatus nextStatus,
             CancellationToken cancellationToken = default);
 
         Task<(bool Success, UserStatusResponse Data, string Error)> GetUserStatusAsync(

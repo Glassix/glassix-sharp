@@ -54,7 +54,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Owner ID (for TICKET_OWNER_CHANGE events)
         /// </summary>
-        public string OwnerId { get; set; }
+        public Guid OwnerId { get; set; }
         
         /// <summary>
         /// Owner username (for TICKET_OWNER_CHANGE events)
@@ -64,7 +64,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// User ID (for USER_STATUS_CHANGE events)
         /// </summary>
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
         
         /// <summary>
         /// Username (for USER_STATUS_CHANGE events)
@@ -74,7 +74,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// User status (for USER_STATUS_CHANGE events)
         /// </summary>
-        public string UserStatus { get; set; }
+        public User.UserStatus UserStatus { get; set; }
         
         /// <summary>
         /// Whether Do Not Disturb is enabled (for USER_STATUS_CHANGE events)
@@ -94,7 +94,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Message object (for NON_TICKET_MESSAGE_STATUS events)
         /// </summary>
-        public object Message { get; set; }
+        public Message Message { get; set; }
         
         /// <summary>
         /// Participant object (for SURVEY_UPDATE events)
@@ -104,6 +104,6 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Survey responses (for SURVEY_UPDATE events)
         /// </summary>
-        public List<object> Surveys { get; set; }
+        public List<Survey> Surveys { get; set; }
     }
 }

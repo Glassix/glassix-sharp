@@ -35,7 +35,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// URI to access the attachment
         /// </summary>
-        public string Uri { get; set; }
+        public Uri Uri { get; set; }
         
         /// <summary>
         /// Whether the attachment is embedded in the message

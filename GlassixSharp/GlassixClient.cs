@@ -287,7 +287,7 @@ namespace GlassixSharp
         public async Task<(bool Success, TicketListResponse Data, string Error)> ListTicketsAsync(
             DateTime since,
             DateTime until,
-            TicketState? ticketState = null,
+            Ticket.State? ticketState = null,
             SortOrder? sortOrder = null,
             string page = null,
             CancellationToken cancellationToken = default)
@@ -358,7 +358,7 @@ namespace GlassixSharp
         /// <returns>Result of the operation</returns>
         public async Task<(bool Success, MessageResponse Data, string Error)> SetTicketStateAsync(
             int ticketId,
-            TicketState nextState,
+            Ticket.State nextState,
             bool getTicket = false,
             bool sendTicketStateChangedMessage = true,
             bool enableWebhook = true,
@@ -479,7 +479,7 @@ namespace GlassixSharp
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
         public async Task<(bool Success, string Error)> SetUserStatusAsync(
-            UserStatus nextStatus,
+            User.UserStatus nextStatus,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<EmptyResponse>(

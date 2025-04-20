@@ -11,7 +11,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Unique identifier for the contact
         /// </summary>
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         
         /// <summary>
         /// Name of the contact
@@ -36,7 +36,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// URI to access the contact's image
         /// </summary>
-        public string ImageUri { get; set; }
+        public Uri ImageUri { get; set; }
         
         /// <summary>
         /// When the contact was created
@@ -67,7 +67,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Contact ID this identifier belongs to
         /// </summary>
-        public string ContactId { get; set; }
+        public Guid ContactId { get; set; }
         
         /// <summary>
         /// Type of identifier (PhoneNumber, MailAddress, etc.)
