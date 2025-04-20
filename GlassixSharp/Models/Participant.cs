@@ -30,7 +30,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Protocol type (e.g., WhatsApp, SMS, Web)
         /// </summary>
-        public string ProtocolType { get; set; }
+        public ProtocolType ProtocolType { get; set; }
         
         /// <summary>
         /// Sub-protocol type

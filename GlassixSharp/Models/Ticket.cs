@@ -117,7 +117,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Primary protocol used in the ticket
         /// </summary>
-        public string PrimaryProtocolType { get; set; }
+        public ProtocolType PrimaryProtocolType { get; set; }
         
         /// <summary>
         /// Additional details about the ticket

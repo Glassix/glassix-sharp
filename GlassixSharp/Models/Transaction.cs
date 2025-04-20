@@ -26,7 +26,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Protocol type the transaction was sent from
         /// </summary>
-        public string FromProtocolType { get; set; }
+        public ProtocolType FromProtocolType { get; set; }
         
         /// <summary>
         /// Type of transaction (Message, TicketOpened, etc.)
