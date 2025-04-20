@@ -9,26 +9,26 @@ namespace GlassixSharp.Models
 {
     public class Survey
     {
-        public int id;
+        public int id { get; set; }
         /// <summary>
         /// Questions are part of a survey(which cotains questions)
         /// </summary>
-        public int surveyId;
-        public string title;
-        public string value; // 1-5
+        public int surveyId { get; set; }
+        public string title { get; set; }
+        public string value { get; set; } // 1-5
         /// <summary>
         /// The title of the parent. [Intro] column from[surveysHeaders] table
         /// </summary>
-        public string headerTitle;
+        public string headerTitle { get; set; }
         /// <summary>
         /// Currentlly we only use rating
         /// </summary>
 
-        public bool isDisabled;
+        public bool isDisabled { get; set; }
 
-        public bool isMandatory;
+        public bool isMandatory { get; set; }
 
-        public QuestionType questionType;
+        public QuestionType questionType { get; set; }
 
         public enum QuestionType
         {

@@ -11,47 +11,53 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Unique identifier for the contact
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid id { get; set; }
         
         /// <summary>
         /// Name of the contact
         /// </summary>
-        public string Name { get; set; }
+        public string name { get; set; }
         
         /// <summary>
         /// Identifiers associated with the contact (phone numbers, emails, etc.)
         /// </summary>
-        public List<ContactIdentifier> Identifiers { get; set; }
+        public List<ContactIdentifier> identifiers { get; set; }
         
         /// <summary>
         /// Custom argument for the contact
         /// </summary>
-        public string UniqueArgument { get; set; }
+        public string uniqueArgument { get; set; }
         
         /// <summary>
         /// File identifier for the contact's image
         /// </summary>
-        public string ImageFileIdentifier { get; set; }
+        public string imageFileIdentifier { get; set; }
         
         /// <summary>
         /// URI to access the contact's image
         /// </summary>
-        public Uri ImageUri { get; set; }
+        public Uri imageUri { get; set; }
         
         /// <summary>
         /// When the contact was created
         /// </summary>
-        public DateTime CreationDateTime { get; set; }
+        public DateTime creationDateTime { get; set; }
         
         /// <summary>
         /// When the contact was last updated
         /// </summary>
-        public DateTime UpdateDateTime { get; set; }
+        public DateTime updateDateTime { get; set; }
         
         /// <summary>
         /// Whether the contact has been deleted
         /// </summary>
-        public bool IsDeleted { get; set; }
+        public bool isDeleted { get; set; }
+        public bool isScrambled { get; set; }
+
+        /// <summary>
+        /// Each contact can have multiple tags.
+        /// </summary>
+        public List<string> tags { get; set; }
     }
     
     /// <summary>
@@ -62,36 +68,37 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Unique identifier for the contact identifier
         /// </summary>
-        public int Id { get; set; }
+        public int id { get; set; }
         
         /// <summary>
         /// Contact ID this identifier belongs to
         /// </summary>
-        public Guid ContactId { get; set; }
+        public Guid contactId { get; set; }
         
         /// <summary>
         /// Type of identifier (PhoneNumber, MailAddress, etc.)
         /// </summary>
-        public string IdentifierType { get; set; }
+        public string identifierType { get; set; }
         
         /// <summary>
         /// The actual identifier value
         /// </summary>
-        public string Identifier { get; set; }
+        public string identifier { get; set; }
         
         /// <summary>
         /// When the identifier was last accessed
         /// </summary>
-        public DateTime LastAccessed { get; set; }
+        public DateTime lastAccessed { get; set; }
         
         /// <summary>
         /// Whether the identifier has been verified
         /// </summary>
-        public bool IsVerified { get; set; }
+        public bool isVerified { get; set; }
         
         /// <summary>
         /// Whether the identifier has been deleted
         /// </summary>
-        public bool IsDeleted { get; set; }
+        public bool isDeleted { get; set; }
+        public bool isScrambled { get; set; }
     }
 }

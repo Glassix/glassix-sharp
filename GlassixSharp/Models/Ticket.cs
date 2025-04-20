@@ -10,316 +10,316 @@ namespace GlassixSharp
         /// <summary>
         /// Unique identifier for a ticket.
         /// </summary>
-        public int id;
+        public int id { get; set; }
 
         /// <summary>
         /// The department this ticket belongs to. (this value is the same as the apiKey)
         /// </summary>
-        public Guid departmentId;
+        public Guid departmentId { get; set; }
 
         /// <summary>
         /// Free text field for ticket subject.
         /// </summary>
-        public string field1;
+        public string field1 { get; set; }
 
         /// <summary>
         /// Dynamic field.
         /// </summary>
-        public string field2;
+        public string field2 { get; set; }
 
         /// <summary>
         /// Dynamic field.
         /// </summary>
-        public string field3;
+        public string field3 { get; set; }
 
         /// <summary>
         /// Dynamic field.
         /// </summary>
-        public string field4;
+        public string field4 { get; set; }
 
         /// <summary>
         /// Dynamic field.
         /// </summary>
-        public string field5;
+        public string field5 { get; set; }
 
         /// <summary>
         /// Dynamic field.
         /// </summary>
-        public string field6;
+        public string field6 { get; set; }
 
         /// <summary>
         /// Dynamic field.
         /// </summary>
-        public string field7;
+        public string field7 { get; set; }
 
         /// <summary>
         /// Dynamic field.
         /// </summary>
-        public string field8;
+        public string field8 { get; set; }
 
         /// <summary>
         /// Dynamic field.
         /// </summary>
-        public string field9;
+        public string field9 { get; set; }
 
         /// <summary>
         /// Dynamic field.
         /// </summary>
-        public string field10;
+        public string field10 { get; set; }
 
         /// <summary>
         /// Restricted code list to note ticket/participant's language/culture. Can customize user's GUI.
         /// Example values: en-US (English), he-IL (Hebrew), pt-PT (Portuguese), es-ES (Spanish)
         /// </summary>
-        public string culture;
+        public string culture { get; set; }
 
         /// <summary>
         /// Determines whether the ticket is with an agent, a bot, or a Glassix bot based on the owner.
         /// Possible values: Regular, Bot, GlassixBot
         /// </summary>
-        public string ticketType;
+        public string ticketType { get; set; }
 
         /// <summary>
         /// List of tags associated with the ticket.
         /// </summary>
-        public List<string> tags;
+        public List<string> tags { get; set; }
 
         /// <summary>
         /// The user (agent) who owns this ticket.
         /// </summary>
-        public User owner;
+        public User owner { get; set; }
 
         /// <summary>
         /// The state of the ticket.
         /// Possible values: Closed, Open, Snoozed, Pending
         /// </summary>
-        public State state;
+        public State state { get; set; }
 
         /// <summary>
         /// The date and time of when this ticket was opened. UTC
         /// </summary>
-        public DateTime open;
+        public DateTime open { get; set; }
 
         /// <summary>
         /// The date and time of when this ticket was closed. UTC
         /// </summary>
-        public DateTime close;
+        public DateTime close { get; set; }
 
         /// <summary>
         /// The date and time of the last activity on this ticket.
         /// </summary>
-        public DateTime lastActivity;
+        public DateTime lastActivity { get; set; }
 
         /// <summary>
         /// Custom parameter to assist sys admins to keep the CRM's tickets in sync, e.g., CRM case id.
         /// Returned on every event or endpoint.
         /// </summary>
-        public string uniqueArgument;
+        public string uniqueArgument { get; set; }
 
         /// <summary>
         /// Additional details about this ticket.
         /// </summary>
-        public Details details;
+        public Details details { get; set; }
 
         /// <summary>
         /// Participant's communication channel. For user type 'User' only Web is applicable.
         /// </summary>
-        public ProtocolType primaryProtocolType;
+        public ProtocolType primaryProtocolType { get; set; }
 
         /// <summary>
         /// New ticket id after cloning to another department.
         /// </summary>
-        public int movedToTicketId;
+        public int movedToTicketId { get; set; }
 
         /// <summary>
         /// This ticket was moved to another department with this id.
         /// </summary>
-        public Guid movedToDepartmentId;
+        public Guid movedToDepartmentId { get; set; }
 
         /// <summary>
         /// The ticket Id of the original ticket before cloning to this department.
         /// </summary>
-        public int movedFromTicketId;
+        public int movedFromTicketId { get; set; }
 
         /// <summary>
         /// This ticket was moved from another department with this id.
         /// </summary>
-        public Guid movedFromDepartmentId;
+        public Guid movedFromDepartmentId { get; set; }
 
         /// <summary>
         /// The first time a customer has sent a message.
         /// </summary>
-        public DateTime? firstCustomerMessageDateTime;
+        public DateTime? firstCustomerMessageDateTime { get; set; }
 
         /// <summary>
         /// The first time an agent has sent a message.
         /// </summary>
-        public DateTime? firstAgentMessageDateTime;
+        public DateTime? firstAgentMessageDateTime { get; set; }
 
         /// <summary>
         /// The first agent who sent a message.
         /// </summary>
-        public Guid? firstAgentMessageUserId;
+        public Guid? firstAgentMessageUserId { get; set; }
 
         /// <summary>
         /// Owner's response time to the customer's first inbound message (inbound tickets only).
         /// </summary>
-        public TimeSpan? agentAssignToResponseTimeGross;
+        public TimeSpan? agentAssignToResponseTimeGross { get; set; }
 
         /// <summary>
         /// Owner's net response time to the customer's first inbound message during working hours (inbound tickets only).
         /// </summary>
-        public TimeSpan? agentAssignToResponseTimeNet;
+        public TimeSpan? agentAssignToResponseTimeNet { get; set; }
 
         /// <summary>
         /// The last time a customer has sent a message.
         /// </summary>
-        public DateTime? lastCustomerMessageDateTime;
+        public DateTime? lastCustomerMessageDateTime { get; set; }
 
         /// <summary>
         /// The last time an agent has sent a message.
         /// </summary>
-        public DateTime? lastAgentMessageDateTime;
+        public DateTime? lastAgentMessageDateTime { get; set; }
 
         /// <summary>
         /// Total time ticket was un-assigned.
         /// </summary>
-        public TimeSpan? queueTimeGross;
+        public TimeSpan? queueTimeGross { get; set; }
 
         /// <summary>
         /// Total net time ticket was un-assigned during working hours.
         /// </summary>
-        public TimeSpan? queueTimeNet;
+        public TimeSpan? queueTimeNet { get; set; }
 
         /// <summary>
         /// Agent's gross response time to the customer's first inbound message (inbound tickets only).
         /// </summary>
-        public TimeSpan? firstAgentResponseTimeGross;
+        public TimeSpan? firstAgentResponseTimeGross { get; set; }
 
         /// <summary>
         /// Agent's net response time to the customer's first inbound message during working hours (inbound tickets only).
         /// </summary>
-        public TimeSpan? firstAgentResponseTimeNet;
+        public TimeSpan? firstAgentResponseTimeNet { get; set; }
 
         /// <summary>
         /// The timestamp of the first time the ticket was assigned to an agent.
         /// </summary>
-        public DateTime? firstAgentAllocationTimestamp;
+        public DateTime? firstAgentAllocationTimestamp { get; set; }
 
         /// <summary>
         /// The timestamp of the last time the ticket was assigned to an agent.
         /// </summary>
-        public DateTime? lastAgentAllocationTimestamp;
+        public DateTime? lastAgentAllocationTimestamp { get; set; }
 
         /// <summary>
         /// How many images, files etc were sent by agents in this ticket.
         /// </summary>
-        public int agentMediaCount;
+        public int agentMediaCount { get; set; }
 
         /// <summary>
         /// How many images, files etc were sent by customers in this ticket.
         /// </summary>
-        public int customerMediaCount;
+        public int customerMediaCount { get; set; }
 
         /// <summary>
         /// How many messages were sent by agents in this ticket.
         /// </summary>
-        public int agentMessagesCount;
+        public int agentMessagesCount { get; set; }
 
         /// <summary>
         /// How many messages were sent by customers in this ticket.
         /// </summary>
-        public int customerMessagesCount;
+        public int customerMessagesCount { get; set; }
 
         /// <summary>
         /// Total net ticket's duration of this ticket from ticket open to closure during working hours.
         /// </summary>
-        public TimeSpan durationNet;
+        public TimeSpan durationNet { get; set; }
 
         /// <summary>
         /// Total ticket's duration from ticket open to closure.
         /// </summary>
-        public TimeSpan durationGross;
+        public TimeSpan durationGross { get; set; }
 
         /// <summary>
         /// The net average response time it took to the agent to respond for each message sent by the customer from ticket open to closure during working hours.
         /// </summary>
-        public TimeSpan? agentResponseAverageTimeNet;
+        public TimeSpan? agentResponseAverageTimeNet { get; set; }
 
         /// <summary>
         /// The total time of the conversation.
         /// </summary>
-        public TimeSpan? totalConversationTimeNet;
+        public TimeSpan? totalConversationTimeNet { get; set; }
 
         /// <summary>
         /// How many canned replies did the agent sent in this ticket.
         /// </summary>
-        public int agentCannedRepliesCount;
+        public int agentCannedRepliesCount { get; set; }
 
         /// <summary>
         /// Bot conversation identifier.
         /// </summary>
-        public Guid botConversationId;
+        public Guid botConversationId { get; set; }
 
         /// <summary>
         /// List of bot conversation identifiers associated with this ticket.
         /// </summary>
-        public List<Guid> botConversations;
+        public List<Guid> botConversations { get; set; }
 
         /// <summary>
         /// Indicates if this ticket was initiated by a customer (true) or an agent (false).
         /// </summary>
-        public bool isIncoming;
+        public bool isIncoming { get; set; }
 
         /// <summary>
         /// Indicates if the ticket data has been scrambled for privacy.
         /// </summary>
-        public bool isScrambled;
+        public bool isScrambled { get; set; }
 
         /// <summary>
         /// List of participants involved in this ticket.
         /// </summary>
-        public List<Participant> participants;
+        public List<Participant> participants { get; set; }
 
         /// <summary>
         /// List of transactions (messages and events) in this ticket.
         /// </summary>
-        public List<Transaction> transactions;
+        public List<Transaction> transactions { get; set; }
 
         /// <summary>
         /// List of dynamic parameters associated with this ticket.
         /// </summary>
-        public List<DynamicParameter> dynamicParameters;
+        public List<DynamicParameter> dynamicParameters { get; set; }
 
         /// <summary>
         /// Detailed information on the cards in the bot the customer went through.
         /// </summary>
-        public List<CardData> botConversationSteps;
+        public List<CardData> botConversationSteps { get; set; }
 
         /// <summary>
         /// Summary of the ticket.
         /// </summary>
-        public TicketSummary ticketSummary;
+        public TicketSummary ticketSummary { get; set; }
 
         /// <summary>
         /// IDs of tickets nested under this ticket.
         /// </summary>
-        public List<int> nestedTicketsIds;
+        public List<int> nestedTicketsIds { get; set; }
 
         /// <summary>
         /// ID of the parent ticket if this is a nested ticket.
         /// </summary>
-        public int parentNestedTicketId;
+        public int parentNestedTicketId { get; set; }
 
         /// <summary>
         /// Indicates if the ticket was closed automatically by the system.
         /// </summary>
-        public bool wasClosedAutomatically;
+        public bool wasClosedAutomatically { get; set; }
 
         /// <summary>
         /// Total count of transactions in this ticket.
         /// </summary>
-        public int transactionsCount;
+        public int transactionsCount { get; set; }
 
         public Ticket() { }
 
@@ -363,17 +363,17 @@ namespace GlassixSharp
             /// <summary>
             /// The ID of the user who created the summary.
             /// </summary>
-            public Guid userId;
+            public Guid userId { get; set; }
 
             /// <summary>
             /// The timestamp when the summary was last updated.
             /// </summary>
-            public DateTime? lastUpdateTimestamp;
+            public DateTime? lastUpdateTimestamp { get; set; }
 
             /// <summary>
             /// The summary text.
             /// </summary>
-            public string value;
+            public string value { get; set; }
         }
 
         /// <summary>
@@ -384,47 +384,47 @@ namespace GlassixSharp
             /// <summary>
             /// The user agent of the customer.
             /// </summary>
-            public string userAgent;
+            public string userAgent { get; set; }
 
             /// <summary>
             /// The IP of the customer.
             /// </summary>
-            public string iPAddress;
+            public string iPAddress { get; set; }
 
             /// <summary>
             /// City, State, Country etc.
             /// </summary>
-            public string location;
+            public string location { get; set; }
 
             /// <summary>
             /// Path of bot conversation cards.
             /// </summary>
-            public string cardsPath;
+            public string cardsPath { get; set; }
 
             /// <summary>
             /// The source from which this ticket was opened. Can be a website address, a Facebook page, etc.
             /// </summary>
-            public Link source;
+            public Link source { get; set; }
 
             /// <summary>
             /// Link to the CRM ticket (referenced in the unique argument) or any other link you want the agent to see with the ticket details.
             /// </summary>
-            public Uri externalLink;
+            public Uri externalLink { get; set; }
 
             /// <summary>
             /// Was this ticket opened on the mobile. This value is valid only for chat tickets.
             /// </summary>
-            public bool isMobile;
+            public bool isMobile { get; set; }
 
             /// <summary>
             /// Claims from identity token used for authentication.
             /// </summary>
-            public Dictionary<string, string> identityTokenClaims;
+            public Dictionary<string, string> identityTokenClaims { get; set; }
 
             /// <summary>
             /// Referral information for this ticket.
             /// </summary>
-            public Referral referral;
+            public Referral referral { get; set; }
 
             /// <summary>
             /// Represents a link with title and URI.
@@ -434,12 +434,12 @@ namespace GlassixSharp
                 /// <summary>
                 /// Source title.
                 /// </summary>
-                public string title;
+                public string title { get; set; }
 
                 /// <summary>
                 /// Source URI.
                 /// </summary>
-                public Uri uri;
+                public Uri uri { get; set; }
             }
 
             /// <summary>
@@ -451,92 +451,92 @@ namespace GlassixSharp
                 /// UTM parameters are short pieces of code (starts with utm_) added to links,
                 /// including information about link placement and purpose for tracking clicks and traffic.
                 /// </summary>
-                public Dictionary<string, string> utmParameters;
+                public Dictionary<string, string> utmParameters { get; set; }
 
                 /// <summary>
                 /// Facebook ad/Instagram ad id that this ticket originated from.
                 /// </summary>
-                public string adId;
+                public string adId { get; set; }
 
                 /// <summary>
                 /// Facebook ad/Instagram ad title that this ticket originated from.
                 /// </summary>
-                public string adTitle;
+                public string adTitle { get; set; }
 
                 /// <summary>
                 /// Data passed as a query string to messenger links.
                 /// </summary>
-                public string refData;
+                public string refData { get; set; }
 
                 /// <summary>
                 /// Product ID from the Ad the user is interested in.
                 /// </summary>
-                public string productId;
+                public string productId { get; set; }
 
                 /// <summary>
                 /// The fb post id of the ad.
                 /// </summary>
-                public string fbPostId;
+                public string fbPostId { get; set; }
 
                 /// <summary>
                 /// Instagram story identifier.
                 /// </summary>
-                public string instagramStoryId;
+                public string instagramStoryId { get; set; }
 
                 /// <summary>
                 /// URL to Instagram story media.
                 /// </summary>
-                public Uri instagramStoryMediaUrl;
+                public Uri instagramStoryMediaUrl { get; set; }
 
                 /// <summary>
                 /// Apple business chat intent identifier for message routing.
                 /// </summary>
-                public string appleIntentId;
+                public string appleIntentId { get; set; }
 
                 /// <summary>
                 /// Apple business chat group identifier for message routing.
                 /// </summary>
-                public string appleGroupId;
+                public string appleGroupId { get; set; }
 
                 /// <summary>
                 /// Twitter root tweet identifier.
                 /// </summary>
-                public string twitterRootTweetId;
+                public string twitterRootTweetId { get; set; }
 
                 /// <summary>
                 /// TikTok video identifier.
                 /// </summary>
-                public string tikTokVideoId;
+                public string tikTokVideoId { get; set; }
 
                 /// <summary>
                 /// TikTok comment identifier.
                 /// </summary>
-                public string tikTokCommentId;
+                public string tikTokCommentId { get; set; }
 
                 /// <summary>
                 /// WhatsApp referral headline.
                 /// </summary>
-                public string whatsappHeadline;
+                public string whatsappHeadline { get; set; }
 
                 /// <summary>
                 /// WhatsApp referral body.
                 /// </summary>
-                public string whatsappBody;
+                public string whatsappBody { get; set; }
 
                 /// <summary>
                 /// WhatsApp referral source type.
                 /// </summary>
-                public string whatsappSourceType;
+                public string whatsappSourceType { get; set; }
 
                 /// <summary>
                 /// WhatsApp referral source identifier.
                 /// </summary>
-                public string whatsappSourceId;
+                public string whatsappSourceId { get; set; }
 
                 /// <summary>
                 /// WhatsApp referral source URL.
                 /// </summary>
-                public Uri whatsappSourceUrl;
+                public Uri whatsappSourceUrl { get; set; }
             }
         }
     }

@@ -10,63 +10,63 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Participant Id in the ticket.
         /// </summary>
-        public int id;
+        public int id { get; set; }
 
         /// <summary>
         /// The name of the participant.
         /// </summary>
-        public string name;
+        public string name { get; set; }
 
         /// <summary>
         /// Client is the end user you're communicating with.
         /// User is a Glassix agent. This is used in cases where you want to add agent participants that are not the owners of the ticket or a conversation between agents only.
         /// </summary>
-        public Type type;
+        public Type type { get; set; }
 
         /// <summary>
         /// The identifier of the customer.
         /// </summary>
-        public string identifier;
+        public string identifier { get; set; }
 
         /// <summary>
         /// The identifier of the department.
         /// </summary>
-        public string departmentIdentifier;
+        public string departmentIdentifier { get; set; }
 
         /// <summary>
         /// The name that will be displayed for the customer.
         /// </summary>
-        public string displayName;
+        public string displayName { get; set; }
 
         /// <summary>
         /// Participant's communication channel. For user type 'User' only Web is applicable.
         /// </summary>
-        public ProtocolType protocolType;
+        public ProtocolType protocolType { get; set; }
 
         /// <summary>
         /// The sub-protocol type used for communication.
         /// </summary>
-        public SubProtocolType subProtocolType;
+        public SubProtocolType subProtocolType { get; set; }
 
         /// <summary>
         /// Switch to determine if the participant is active in the conversation.
         /// </summary>
-        public bool isActive = true;
+        public bool isActive { get; set; } = true;
 
         /// <summary>
         /// Switch to determine if the participant is deleted from the conversation.
         /// </summary>
-        public bool isDeleted;
+        public bool isDeleted { get; set; }
 
         /// <summary>
         /// The Glassix contact id of this participant. If you don't know it keep this field empty.
         /// </summary>
-        public Guid contactId;
+        public Guid contactId { get; set; }
 
         /// <summary>
         /// Relevant only to agent participants.
         /// </summary>
-        public string userName;
+        public string userName { get; set; }
 
         /// <summary>
         /// Defines the type of participant in the system.
