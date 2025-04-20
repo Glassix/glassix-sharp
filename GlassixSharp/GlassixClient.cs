@@ -22,6 +22,7 @@ namespace GlassixSharp
         private readonly string _baseUrl;
         private readonly Credentials _credentials;
 
+        private readonly Dictionary<string, string> _customHeaders = new Dictionary<string, string>();
         private static readonly ConcurrentDictionary<string, (string Token, DateTime ExpiresAt)> _tokens = new ConcurrentDictionary<string, (string, DateTime)>();
         private static readonly SemaphoreSlim _tokenSemaphore = new SemaphoreSlim(1, 1);
 
@@ -35,7 +36,8 @@ namespace GlassixSharp
         /// Creates a new instance of the GlassixSharp client
         /// </summary>
         /// <param name="credentials">The credentials to use for authentication</param>
-        public GlassixClient(Credentials credentials)
+        /// <param name="headers">Custom headers that will be sent on every request</param>
+        public GlassixClient(Credentials credentials, Dictionary<string, string>? headers = null)
         {
             _credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
             _baseUrl = $"https://{_credentials.WorkspaceName}.glassix.com/api/v1.2";
@@ -43,6 +45,11 @@ namespace GlassixSharp
             if (_credentials.TimeoutSeconds > 0)
             {
                 _httpClient.Timeout = TimeSpan.FromSeconds(_credentials.TimeoutSeconds);
+            }
+
+            if (headers != null)
+            {
+                _customHeaders = headers;
             }
         }
 
@@ -120,6 +127,18 @@ namespace GlassixSharp
                 {
                     var token = await GetTokenAsync(cancellationToken).ConfigureAwait(false);
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                // Add custom headers
+                if(_customHeaders != null && _customHeaders.Count > 0)
+                {
+                    foreach (var header in _customHeaders)
+                    {
+                        if(!string.IsNullOrEmpty(header.Key) && !string.IsNullOrEmpty(header.Value))
+                        {
+                            request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                        }
+                    }
                 }
 
                 if (body != null)
