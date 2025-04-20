@@ -10,19 +10,16 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Your API key
         /// </summary>
-        [JsonPropertyName("apiKey")]
-        public string ApiKey { get; set; }
+        public string apiKey { get; set; }
         
         /// <summary>
         /// Your API secret
         /// </summary>
-        [JsonPropertyName("apiSecret")]
-        public string ApiSecret { get; set; }
+        public string apiSecret { get; set; }
         
         /// <summary>
         /// User's email address
         /// </summary>
-        [JsonPropertyName("userName")]
-        public string UserName { get; set; }
+        public string userName { get; set; }
     }
 }

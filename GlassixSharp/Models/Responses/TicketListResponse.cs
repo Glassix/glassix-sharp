@@ -11,13 +11,12 @@ namespace GlassixSharp.Models.Responses
         /// <summary>
         /// List of tickets
         /// </summary>
-        [JsonPropertyName("")]
-        public List<Ticket> Tickets { get; set; }
+        public List<Ticket> tickets { get; set; }
         
         /// <summary>
         /// Paging information
         /// </summary>
-        public PagingInfo Paging { get; set; }
+        public PagingInfo paging { get; set; }
     }
     
     /// <summary>
@@ -28,6 +27,6 @@ namespace GlassixSharp.Models.Responses
         /// <summary>
         /// URL for the next page of results
         /// </summary>
-        public string Next { get; set; }
+        public string next { get; set; }
     }
 }

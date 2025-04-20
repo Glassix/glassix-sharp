@@ -60,7 +60,7 @@ namespace GlassixSharp
         /// <returns>The access token</returns>
         private async Task<string> GetTokenAsync(CancellationToken cancellationToken = default)
         {
-            var tokenKey = $"{_credentials.WorkspaceName}:{_credentials.ApiKey}:{_credentials.UserName}";
+            string tokenKey = $"{_credentials.WorkspaceName}:{_credentials.ApiKey}:{_credentials.UserName}";
 
             if (_tokens.TryGetValue(tokenKey, out var tokenInfo) && DateTime.UtcNow < tokenInfo.ExpiresAt.AddMinutes(-5))
                 return tokenInfo.Token;
@@ -73,11 +73,11 @@ namespace GlassixSharp
                 if (_tokens.TryGetValue(tokenKey, out tokenInfo) && DateTime.UtcNow < tokenInfo.ExpiresAt.AddMinutes(-5))
                     return tokenInfo.Token;
 
-                var request = new TokenRequest
+                TokenRequest request = new TokenRequest
                 {
-                    ApiKey = _credentials.ApiKey.ToString(),
-                    ApiSecret = _credentials.ApiSecret,
-                    UserName = _credentials.UserName
+                    apiKey = _credentials.ApiKey.ToString(),
+                    apiSecret = _credentials.ApiSecret,
+                    userName = _credentials.UserName
                 };
 
                 var response = await SendRequestAsync<TokenResponse>(
@@ -89,9 +89,12 @@ namespace GlassixSharp
 
                 if (response.IsSuccess)
                 {
-                    var expiresAt = DateTime.UtcNow.AddSeconds(response.Data.ExpiresIn);
-                    _tokens[tokenKey] = (response.Data.AccessToken, expiresAt);
-                    return response.Data.AccessToken;
+                    if(string.IsNullOrEmpty(response.Data.access_token))
+                        throw new Exception("Access token is empty");
+
+                    DateTime expiresAt = DateTime.UtcNow.AddSeconds(response.Data.expires_in);
+                    _tokens[tokenKey] = (response.Data.access_token, expiresAt);
+                    return response.Data.access_token;
                 }
 
                 throw new Exception($"Failed to obtain token: {response.ErrorMessage}");
