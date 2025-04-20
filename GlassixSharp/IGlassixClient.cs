@@ -14,11 +14,11 @@ namespace GlassixSharp
     public interface IGlassixClient
     {
         // Tickets
-        Task<(bool Success, TicketResponse Data, string Error)> CreateTicketAsync(
+        Task<(bool Success, Ticket Data, string Error)> CreateTicketAsync(
             CreateTicketRequest request,
             CancellationToken cancellationToken = default);
 
-        Task<(bool Success, TicketResponse Data, string Error)> GetTicketAsync(
+        Task<(bool Success, Ticket Data, string Error)> GetTicketAsync(
             int ticketId,
             CancellationToken cancellationToken = default);
 
@@ -30,7 +30,7 @@ namespace GlassixSharp
             string page = null,
             CancellationToken cancellationToken = default);
 
-        Task<(bool Success, TransactionResponse Data, string Error)> SendMessageAsync(
+        Task<(bool Success, Transaction Data, string Error)> SendMessageAsync(
             int ticketId,
             SendMessageRequest request,
             CancellationToken cancellationToken = default);
@@ -44,7 +44,7 @@ namespace GlassixSharp
             SetTicketStateRequest body = null,
             CancellationToken cancellationToken = default);
 
-        Task<(bool Success, EmptyResponse Data, string Error)> SetTicketFieldsAsync(
+        Task<(bool Success, string Error)> SetTicketFieldsAsync(
             int ticketId,
             SetTicketFieldsRequest request,
             CancellationToken cancellationToken = default);
@@ -63,7 +63,7 @@ namespace GlassixSharp
         Task<(bool Success, List<User> Data, string Error)> GetAllUsersAsync(
             CancellationToken cancellationToken = default);
 
-        Task<(bool Success, EmptyResponse Data, string Error)> SetUserStatusAsync(
+        Task<(bool Success, string Error)> SetUserStatusAsync(
             UserStatus nextStatus,
             CancellationToken cancellationToken = default);
 
