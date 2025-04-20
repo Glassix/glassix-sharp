@@ -15,7 +15,7 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Protocol type (SMS, WhatsApp, AppleBusinessChat)
         /// </summary>
-        public string ProtocolType { get; set; }
+        public ProtocolType ProtocolType { get; set; }
         
         /// <summary>
         /// Sender's phone number or Apple ID

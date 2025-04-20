@@ -97,4 +97,12 @@ namespace GlassixSharp.Models
         [EnumMember(Value = "Undefined")]
         Undefined
     }
+
+    public enum SubProtocolType
+    {
+        Undefined = 0,
+        MailTo = 1,
+        MailCc = 2,
+        MailBcc = 3
+    }
 }

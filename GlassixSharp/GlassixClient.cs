@@ -22,6 +22,7 @@ namespace GlassixSharp
         private readonly string _baseUrl;
         private readonly Credentials _credentials;
 
+        private readonly Dictionary<string, string> _customHeaders = new Dictionary<string, string>();
         private static readonly ConcurrentDictionary<string, (string Token, DateTime ExpiresAt)> _tokens = new ConcurrentDictionary<string, (string, DateTime)>();
         private static readonly SemaphoreSlim _tokenSemaphore = new SemaphoreSlim(1, 1);
 
@@ -35,7 +36,8 @@ namespace GlassixSharp
         /// Creates a new instance of the GlassixSharp client
         /// </summary>
         /// <param name="credentials">The credentials to use for authentication</param>
-        public GlassixClient(Credentials credentials)
+        /// <param name="headers">Custom headers that will be sent on every request</param>
+        public GlassixClient(Credentials credentials, Dictionary<string, string>? headers = null)
         {
             _credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
             _baseUrl = $"https://{_credentials.WorkspaceName}.glassix.com/api/v1.2";
@@ -43,6 +45,11 @@ namespace GlassixSharp
             if (_credentials.TimeoutSeconds > 0)
             {
                 _httpClient.Timeout = TimeSpan.FromSeconds(_credentials.TimeoutSeconds);
+            }
+
+            if (headers != null)
+            {
+                _customHeaders = headers;
             }
         }
 
@@ -120,6 +127,18 @@ namespace GlassixSharp
                 {
                     var token = await GetTokenAsync(cancellationToken).ConfigureAwait(false);
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                // Add custom headers
+                if(_customHeaders != null && _customHeaders.Count > 0)
+                {
+                    foreach (var header in _customHeaders)
+                    {
+                        if(!string.IsNullOrEmpty(header.Key) && !string.IsNullOrEmpty(header.Value))
+                        {
+                            request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                        }
+                    }
                 }
 
                 if (body != null)
@@ -221,11 +240,11 @@ namespace GlassixSharp
         /// <param name="request">The ticket creation request</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The created ticket</returns>
-        public async Task<(bool Success, TicketResponse Data, string Error)> CreateTicketAsync(
+        public async Task<(bool Success, Ticket Data, string Error)> CreateTicketAsync(
             CreateTicketRequest request,
             CancellationToken cancellationToken = default)
         {
-            var response = await SendRequestAsync<TicketResponse>(
+            var response = await SendRequestAsync<Ticket>(
                 HttpMethod.Post,
                 $"{_baseUrl}/tickets/create",
                 request,
@@ -241,11 +260,11 @@ namespace GlassixSharp
         /// <param name="ticketId">ID of the ticket to get</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The requested ticket</returns>
-        public async Task<(bool Success, TicketResponse Data, string Error)> GetTicketAsync(
+        public async Task<(bool Success, Ticket Data, string Error)> GetTicketAsync(
             int ticketId,
             CancellationToken cancellationToken = default)
         {
-            var response = await SendRequestAsync<TicketResponse>(
+            var response = await SendRequestAsync<Ticket>(
                 HttpMethod.Get,
                 $"{_baseUrl}/tickets/get/{ticketId}",
                 null,
@@ -268,7 +287,7 @@ namespace GlassixSharp
         public async Task<(bool Success, TicketListResponse Data, string Error)> ListTicketsAsync(
             DateTime since,
             DateTime until,
-            TicketState? ticketState = null,
+            Ticket.State? ticketState = null,
             SortOrder? sortOrder = null,
             string page = null,
             CancellationToken cancellationToken = default)
@@ -311,12 +330,12 @@ namespace GlassixSharp
         /// <param name="request">The message to send</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The message transaction</returns>
-        public async Task<(bool Success, TransactionResponse Data, string Error)> SendMessageAsync(
+        public async Task<(bool Success, Transaction Data, string Error)> SendMessageAsync(
             int ticketId,
             SendMessageRequest request,
             CancellationToken cancellationToken = default)
         {
-            var response = await SendRequestAsync<TransactionResponse>(
+            var response = await SendRequestAsync<Transaction>(
                 HttpMethod.Post,
                 $"{_baseUrl}/tickets/send/{ticketId}",
                 request,
@@ -339,7 +358,7 @@ namespace GlassixSharp
         /// <returns>Result of the operation</returns>
         public async Task<(bool Success, MessageResponse Data, string Error)> SetTicketStateAsync(
             int ticketId,
-            TicketState nextState,
+            Ticket.State nextState,
             bool getTicket = false,
             bool sendTicketStateChangedMessage = true,
             bool enableWebhook = true,
@@ -374,7 +393,7 @@ namespace GlassixSharp
         /// <param name="request">The fields to update</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
-        public async Task<(bool Success, EmptyResponse Data, string Error)> SetTicketFieldsAsync(
+        public async Task<(bool Success, string Error)> SetTicketFieldsAsync(
             int ticketId,
             SetTicketFieldsRequest request,
             CancellationToken cancellationToken = default)
@@ -386,7 +405,7 @@ namespace GlassixSharp
                 true,
                 cancellationToken).ConfigureAwait(false);
 
-            return (response.IsSuccess, response.Data, response.ErrorMessage);
+            return (response.IsSuccess, response.ErrorMessage);
         }
 
         /// <summary>
@@ -459,8 +478,8 @@ namespace GlassixSharp
         /// <param name="nextStatus">The new status</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
-        public async Task<(bool Success, EmptyResponse Data, string Error)> SetUserStatusAsync(
-            UserStatus nextStatus,
+        public async Task<(bool Success, string Error)> SetUserStatusAsync(
+            User.UserStatus nextStatus,
             CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<EmptyResponse>(
@@ -470,7 +489,7 @@ namespace GlassixSharp
                 true,
                 cancellationToken).ConfigureAwait(false);
 
-            return (response.IsSuccess, response.Data, response.ErrorMessage);
+            return (response.IsSuccess, response.ErrorMessage);
         }
 
         /// <summary>

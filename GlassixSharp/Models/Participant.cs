@@ -1,70 +1,94 @@
 using System;
-
+using System.Text.Json.Serialization;
 namespace GlassixSharp.Models
 {
     /// <summary>
-    /// Represents a participant in a ticket
+    /// A participant is someone who belongs to a specific ticket. Each ticket has at least 2 participants, who can be either an agent or a customer.
     /// </summary>
     public class Participant
     {
         /// <summary>
-        /// Participant ID in the ticket
+        /// Participant Id in the ticket.
         /// </summary>
-        public int Id { get; set; }
-        
+        public int id { get; set; }
+
         /// <summary>
-        /// Type of participant (Client or User)
+        /// The name of the participant.
         /// </summary>
-        public string Type { get; set; }
-        
+        public string name { get; set; }
+
         /// <summary>
-        /// Name of the participant
+        /// Client is the end user you're communicating with.
+        /// User is a Glassix agent. This is used in cases where you want to add agent participants that are not the owners of the ticket or a conversation between agents only.
         /// </summary>
-        public string Name { get; set; }
-        
+        public Type type { get; set; }
+
         /// <summary>
-        /// Display name of the participant
+        /// The identifier of the customer.
         /// </summary>
-        public string DisplayName { get; set; }
-        
+        public string identifier { get; set; }
+
         /// <summary>
-        /// Protocol type (e.g., WhatsApp, SMS, Web)
+        /// The identifier of the department.
         /// </summary>
-        public string ProtocolType { get; set; }
-        
+        public string departmentIdentifier { get; set; }
+
         /// <summary>
-        /// Sub-protocol type
+        /// The name that will be displayed for the customer.
         /// </summary>
-        public string SubProtocolType { get; set; }
-        
+        public string displayName { get; set; }
+
         /// <summary>
-        /// Whether the participant is active
+        /// Participant's communication channel. For user type 'User' only Web is applicable.
         /// </summary>
-        public bool IsActive { get; set; }
-        
+        public ProtocolType protocolType { get; set; }
+
         /// <summary>
-        /// Whether the participant has been deleted
+        /// The sub-protocol type used for communication.
         /// </summary>
-        public bool IsDeleted { get; set; }
-        
+        public SubProtocolType subProtocolType { get; set; }
+
         /// <summary>
-        /// Identifier for the participant (e.g., phone number, email)
+        /// Switch to determine if the participant is active in the conversation.
         /// </summary>
-        public string Identifier { get; set; }
-        
+        public bool isActive { get; set; } = true;
+
         /// <summary>
-        /// Department identifier
+        /// Switch to determine if the participant is deleted from the conversation.
         /// </summary>
-        public string DepartmentIdentifier { get; set; }
-        
+        public bool isDeleted { get; set; }
+
         /// <summary>
-        /// Contact ID for this participant
+        /// The Glassix contact id of this participant. If you don't know it keep this field empty.
         /// </summary>
-        public string ContactId { get; set; }
-        
+        public Guid contactId { get; set; }
+
         /// <summary>
-        /// Username (for agent participants)
+        /// Relevant only to agent participants.
         /// </summary>
-        public string UserName { get; set; }
+        public string userName { get; set; }
+
+        /// <summary>
+        /// Defines the type of participant in the system.
+        /// </summary>
+        public enum Type
+        {
+            Undefind = 0,
+
+            /// <summary>
+            /// Client is the end user you're communicating with.
+            /// </summary>
+            Client = 1,
+
+            /// <summary>
+            /// User is a Glassix agent. This is used in cases where you want to add agent participants that are not the owners of the ticket or a conversation between agents only.
+            /// </summary>
+            User = 2,
+
+            /// <summary>
+            /// System generated participant.
+            /// </summary>
+            System = 3
+        }
     }
 }

@@ -63,6 +63,6 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Additional details about the ticket
         /// </summary>
-        public TicketDetails Details { get; set; }
+        public Ticket.Details Details { get; set; }
     }
 }

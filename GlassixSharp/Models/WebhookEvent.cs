@@ -12,17 +12,17 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Unique identifier for the event
         /// </summary>
-        public string Key { get; set; }
+        public string key { get; set; }
         
         /// <summary>
         /// When the event occurred
         /// </summary>
-        public DateTime DateTime { get; set; }
+        public DateTime dateTime { get; set; }
         
         /// <summary>
         /// Changes included in the event
         /// </summary>
-        public List<WebhookChange> Changes { get; set; }
+        public List<WebhookChange> changes { get; set; }
     }
     
     /// <summary>
@@ -33,77 +33,76 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Type of event (NEW_TICKET, TICKET_STATE_CHANGE, etc.)
         /// </summary>
-        [JsonPropertyName("_event")]
-        public string Event { get; set; }
+        public string _event { get; set; }
         
         /// <summary>
         /// Ticket ID associated with the event
         /// </summary>
-        public int? TicketId { get; set; }
+        public int? ticketId { get; set; }
         
         /// <summary>
         /// New ticket state (for TICKET_STATE_CHANGE events)
         /// </summary>
-        public string TicketState { get; set; }
+        public string ticketState { get; set; }
         
         /// <summary>
         /// Full ticket object (for NEW_TICKET and some other events)
         /// </summary>
-        public Ticket Ticket { get; set; }
+        public Ticket ticket { get; set; }
         
         /// <summary>
         /// Owner ID (for TICKET_OWNER_CHANGE events)
         /// </summary>
-        public string OwnerId { get; set; }
+        public Guid? ownerId { get; set; }
         
         /// <summary>
         /// Owner username (for TICKET_OWNER_CHANGE events)
         /// </summary>
-        public string OwnerUserName { get; set; }
+        public string ownerUserName { get; set; }
         
         /// <summary>
         /// User ID (for USER_STATUS_CHANGE events)
         /// </summary>
-        public string UserId { get; set; }
+        public Guid? userId { get; set; }
         
         /// <summary>
         /// Username (for USER_STATUS_CHANGE events)
         /// </summary>
-        public string UserName { get; set; }
+        public string userName { get; set; }
         
         /// <summary>
         /// User status (for USER_STATUS_CHANGE events)
         /// </summary>
-        public string UserStatus { get; set; }
+        public User.UserStatus? userStatus { get; set; }
         
         /// <summary>
         /// Whether Do Not Disturb is enabled (for USER_STATUS_CHANGE events)
         /// </summary>
-        public bool? DoNotDisturb { get; set; }
+        public bool? doNotDisturb { get; set; }
         
         /// <summary>
         /// Transaction object (for NEW_MESSAGE events)
         /// </summary>
-        public Transaction Transaction { get; set; }
+        public Transaction transaction { get; set; }
         
         /// <summary>
         /// Document object (for DOCUMENT_SIGNED events)
         /// </summary>
-        public object Document { get; set; }
+        public object document { get; set; }
         
         /// <summary>
         /// Message object (for NON_TICKET_MESSAGE_STATUS events)
         /// </summary>
-        public object Message { get; set; }
+        public Message message { get; set; }
         
         /// <summary>
         /// Participant object (for SURVEY_UPDATE events)
         /// </summary>
-        public Participant Participant { get; set; }
+        public Participant participant { get; set; }
         
         /// <summary>
         /// Survey responses (for SURVEY_UPDATE events)
         /// </summary>
-        public List<object> Surveys { get; set; }
+        public List<Survey> surveys { get; set; }
     }
 }

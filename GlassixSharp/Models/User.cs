@@ -1,70 +1,107 @@
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace GlassixSharp.Models
 {
     /// <summary>
-    /// Represents a user (agent) in the Glassix system
+    /// A user represents an agent and can be assigned to many departments.
     /// </summary>
     public class User
     {
         /// <summary>
-        /// Unique identifier for the user
+        /// The Id of the user.
         /// </summary>
-        public string Id { get; set; }
-        
+        public Guid id { get; set; }
+
         /// <summary>
-        /// Gender of the user
+        /// The gender of the user.
         /// </summary>
-        public string Gender { get; set; }
-        
+        public Gender gender { get; set; }
+
         /// <summary>
-        /// Email address of the user
+        /// User's email address.
         /// </summary>
         public string UserName { get; set; }
-        
+
         /// <summary>
-        /// Culture code for the user (e.g., "en-US")
+        /// Restricted code list to note ticket/participant's language/culture. Can customize user's GUI.
+        /// - en-US; English
+        /// - he-IL; Hebrew
+        /// - pt-PT; Portuguese
+        /// - es-ES; Spanish
         /// </summary>
-        public string Culture { get; set; }
-        
+        public string culture { get; set; }
+
         /// <summary>
-        /// Whether the user is anonymous
+        /// Switch to determine whether owner appears as participant in ticket.
         /// </summary>
-        public bool IsAnonymous { get; set; }
-        
+        public bool isAnonymous { get; set; }
+
         /// <summary>
-        /// Custom argument for the user
+        /// Custom parameter to assist sys admins to keep the CRM's tickets in sync, e.g., CRM case id. 
+        /// Returned on every event or endpoint.
         /// </summary>
-        public string UniqueArgument { get; set; }
-        
+        public string uniqueArgument { get; set; }
+
         /// <summary>
-        /// Type of user (AGENT, BOT, API)
+        /// The type of the user. AGENT is the standard type, for a human agent.
+        /// Tickets assigned to BOT will not send any automatic messages from our platform.
+        /// BOT and API users can't login into our platform, they can only use the REST API.
         /// </summary>
-        public string Type { get; set; }
-        
+        public string type { get; set; }
+
         /// <summary>
-        /// Full name of the user
+        /// Full name of the user. This value is not exposed to customers.
         /// </summary>
-        public string FullName { get; set; }
-        
+        public string fullName { get; set; }
+
         /// <summary>
-        /// Short name of the user
+        /// First name of the user. This value is exposed to customers.
         /// </summary>
-        public string ShortName { get; set; }
-        
+        public string shortName { get; set; }
+
         /// <summary>
-        /// Job title of the user
+        /// Exposed in mail signatures.
         /// </summary>
-        public string JobTitle { get; set; }
-        
+        public string jobTitle { get; set; }
+
         /// <summary>
-        /// Current status of the user
+        /// The status of the user.
         /// </summary>
-        public string Status { get; set; }
-        
+        public UserStatus status { get; set; }
+
         /// <summary>
-        /// Roles assigned to the user
+        /// List of roles an agent can have.
         /// </summary>
-        public List<string> Roles { get; set; }
+        public List<string> roles { get; set; }
+
+        /// <summary>
+        /// Represents a user's status.
+        /// </summary>
+        public enum UserStatus
+        {
+            Offline,
+            Break,
+            // Note: The schema only lists Offline, Break, and Online,
+            // but the code includes additional break states
+            Break2,
+            Break3,
+            Break4,
+            Break5,
+            Online
+        }
+
+        /// <summary>
+        /// The gender of the user.
+        /// </summary>
+        public enum Gender
+        {
+            Undefined = 0,
+            Male = 1,
+            Female = 2,
+            notApplicable = 9
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace GlassixSharp.Models.Responses
         /// <summary>
         /// Protocol type used
         /// </summary>
-        public string ProtocolType { get; set; }
+        public ProtocolType ProtocolType { get; set; }
         
         /// <summary>
         /// URIs of attachments

@@ -14,37 +14,37 @@ namespace GlassixSharp
     public interface IGlassixClient
     {
         // Tickets
-        Task<(bool Success, TicketResponse Data, string Error)> CreateTicketAsync(
+        Task<(bool Success, Ticket Data, string Error)> CreateTicketAsync(
             CreateTicketRequest request,
             CancellationToken cancellationToken = default);
 
-        Task<(bool Success, TicketResponse Data, string Error)> GetTicketAsync(
+        Task<(bool Success, Ticket Data, string Error)> GetTicketAsync(
             int ticketId,
             CancellationToken cancellationToken = default);
 
         Task<(bool Success, TicketListResponse Data, string Error)> ListTicketsAsync(
             DateTime since,
             DateTime until,
-            TicketState? ticketState = null,
+            Ticket.State? ticketState = null,
             SortOrder? sortOrder = null,
             string page = null,
             CancellationToken cancellationToken = default);
 
-        Task<(bool Success, TransactionResponse Data, string Error)> SendMessageAsync(
+        Task<(bool Success, Transaction Data, string Error)> SendMessageAsync(
             int ticketId,
             SendMessageRequest request,
             CancellationToken cancellationToken = default);
 
         Task<(bool Success, MessageResponse Data, string Error)> SetTicketStateAsync(
             int ticketId,
-            TicketState nextState,
+            Ticket.State nextState,
             bool getTicket = false,
             bool sendTicketStateChangedMessage = true,
             bool enableWebhook = true,
             SetTicketStateRequest body = null,
             CancellationToken cancellationToken = default);
 
-        Task<(bool Success, EmptyResponse Data, string Error)> SetTicketFieldsAsync(
+        Task<(bool Success, string Error)> SetTicketFieldsAsync(
             int ticketId,
             SetTicketFieldsRequest request,
             CancellationToken cancellationToken = default);
@@ -63,8 +63,8 @@ namespace GlassixSharp
         Task<(bool Success, List<User> Data, string Error)> GetAllUsersAsync(
             CancellationToken cancellationToken = default);
 
-        Task<(bool Success, EmptyResponse Data, string Error)> SetUserStatusAsync(
-            UserStatus nextStatus,
+        Task<(bool Success, string Error)> SetUserStatusAsync(
+            User.UserStatus nextStatus,
             CancellationToken cancellationToken = default);
 
         Task<(bool Success, UserStatusResponse Data, string Error)> GetUserStatusAsync(
