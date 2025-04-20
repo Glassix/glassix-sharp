@@ -11,10 +11,10 @@ namespace GlassixSharp.Tests
         public TestFixture()
         {
             // Load credentials from environment variables
-            string? workspaceName = Environment.GetEnvironmentVariable("GLASSIX_WORKSPACE_NAME");
-            string? userName = Environment.GetEnvironmentVariable("GLASSIX_USER_NAME");
-            string? apiKeyString = Environment.GetEnvironmentVariable("GLASSIX_API_KEY");
-            string? apiSecret = Environment.GetEnvironmentVariable("GLASSIX_API_SECRET");
+            string? workspaceName = Environment.GetEnvironmentVariable("WORKSPACE_NAME");
+            string? userName = Environment.GetEnvironmentVariable("USER_NAME");
+            string? apiKeyString = Environment.GetEnvironmentVariable("API_KEY");
+            string? apiSecret = Environment.GetEnvironmentVariable("API_SECRET");
 
             // Skip initialization if any credentials are missing
             if (string.IsNullOrEmpty(workspaceName) ||
