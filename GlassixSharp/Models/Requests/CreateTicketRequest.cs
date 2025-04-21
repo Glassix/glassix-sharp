@@ -58,11 +58,11 @@ namespace GlassixSharp.Models.Requests
         /// Dynamic field
         /// </summary>
         public string field10 { get; set; }
-        
+
         /// <summary>
         /// Culture code (e.g., "en-US")
         /// </summary>
-        public string culture { get; set; }
+        public string culture { get; set; } = "en-US";
         
         /// <summary>
         /// Participants in the ticket
@@ -78,11 +78,11 @@ namespace GlassixSharp.Models.Requests
         /// Custom argument for CRM sync
         /// </summary>
         public string uniqueArgument { get; set; }
-        
+
         /// <summary>
         /// Ticket state
         /// </summary>
-        public Ticket.State state { get; set; }
+        public Ticket.State state { get; set; } = Ticket.State.Open;
         
         /// <summary>
         /// When the ticket was opened
@@ -102,7 +102,7 @@ namespace GlassixSharp.Models.Requests
         /// <summary>
         /// Whether to add an introduction message
         /// </summary>
-        public bool addIntroductionMessage { get; set; } = true;
+        public bool addIntroductionMessage { get; set; } = false;
         
         /// <summary>
         /// Whether to enable webhook for this ticket

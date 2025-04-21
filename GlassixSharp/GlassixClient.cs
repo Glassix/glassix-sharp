@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using GlassixSharp.Models;
@@ -40,7 +41,13 @@ namespace GlassixSharp
         public GlassixClient(Credentials credentials, Dictionary<string, string>? headers = null)
         {
             _credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
-            _baseUrl = $"https://{_credentials.WorkspaceName}.glassix.com/api/v1.2";
+
+            string glassixDomain = "glassix.com";
+            if (credentials.IsTestingEnvironment)
+            {
+                glassixDomain = "glassix-dev.com";
+            }
+            _baseUrl = $"https://{_credentials.WorkspaceName}.{glassixDomain}/api/v1.2";
 
             if (_credentials.TimeoutSeconds > 0)
             {
@@ -105,6 +112,8 @@ namespace GlassixSharp
             }
         }
 
+        JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true, Converters = { new JsonStringEnumConverter() } };
+
         /// <summary>
         /// Sends a request to the Glassix API
         /// </summary>
@@ -124,11 +133,11 @@ namespace GlassixSharp
         {
             try
             {
-                var request = new HttpRequestMessage(method, url);
+                HttpRequestMessage request = new HttpRequestMessage(method, url);
 
                 if (requiresAuth)
                 {
-                    var token = await GetTokenAsync(cancellationToken).ConfigureAwait(false);
+                    string token = await GetTokenAsync(cancellationToken).ConfigureAwait(false);
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
 
@@ -146,16 +155,13 @@ namespace GlassixSharp
 
                 if (body != null)
                 {
-                    var json = JsonSerializer.Serialize(body, new JsonSerializerOptions
-                    {
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                    });
+                    string json = JsonSerializer.Serialize(body, _jsonSerializerOptions);
 
                     request.Content = new StringContent(json, Encoding.UTF8, "application/json");
                 }
 
-                var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+                string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -164,18 +170,12 @@ namespace GlassixSharp
                         return ApiResponse<T>.Success((T)(object)new EmptyResponse());
                     }
 
-                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                    var result = JsonSerializer.Deserialize<T>(content, options);
+                    var result = JsonSerializer.Deserialize<T>(content, _jsonSerializerOptions);
                     return ApiResponse<T>.Success(result);
                 }
 
-                string errorMessage;
-                try
-                {
-                    var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(content);
-                    errorMessage = errorResponse?.Message ?? response.ReasonPhrase;
-                }
-                catch
+                string errorMessage = response.ReasonPhrase;
+                if(!string.IsNullOrEmpty(content))
                 {
                     errorMessage = content;
                 }

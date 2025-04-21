@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35818.85 d17.13
+VisualStudioVersion = 17.13.35818.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlassixSharp", "GlassixSharp\GlassixSharp.csproj", "{3F76BA97-E84F-4BE7-82E7-7C2B0B9BFCFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlassixSharp.Tests", "GlassixSharp.Tests\GlassixSharp.Tests.csproj", "{39DF5E90-C99A-467F-A4CD-D116D93557F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3F76BA97-E84F-4BE7-82E7-7C2B0B9BFCFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F76BA97-E84F-4BE7-82E7-7C2B0B9BFCFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F76BA97-E84F-4BE7-82E7-7C2B0B9BFCFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39DF5E90-C99A-467F-A4CD-D116D93557F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39DF5E90-C99A-467F-A4CD-D116D93557F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39DF5E90-C99A-467F-A4CD-D116D93557F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39DF5E90-C99A-467F-A4CD-D116D93557F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
