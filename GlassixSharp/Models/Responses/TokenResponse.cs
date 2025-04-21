@@ -20,6 +20,6 @@ namespace GlassixSharp.Models.Responses
         /// <summary>
         /// Token expiration time in seconds
         /// </summary>
-        public int expires_in { get; set; }
+        public double expires_in { get; set; }
     }
 }
