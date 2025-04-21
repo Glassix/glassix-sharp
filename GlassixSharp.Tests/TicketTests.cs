@@ -81,11 +81,11 @@ namespace GlassixSharp.Tests
             SkipIfNotConfigured();
 
             // Arrange - Create a ticket first
-            var subject = $"Test Ticket for Get {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}";
-            var contactName = $"Test Contact {Guid.NewGuid()}";
-            var phoneNumber = $"+1234567890{new Random().Next(10, 99)}";
-            
-            var createRequest = new CreateTicketRequest
+            string subject = $"Test Ticket for Get {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")}";
+            string contactName = $"Test Contact {Guid.NewGuid()}";
+            string identifier = $"abc{new Random().Next(10, 99)}@{Guid.NewGuid()}.com";
+
+            CreateTicketRequest createRequest = new CreateTicketRequest
             {
                 field1 = subject,
                 participants = new List<Participant>
@@ -93,9 +93,10 @@ namespace GlassixSharp.Tests
                     new Participant
                     {
                         name = contactName,
-                        identifier = phoneNumber,
-                        protocolType = ProtocolType.WhatsApp,
-                        type = Participant.Type.Client
+                        identifier = identifier,
+                        protocolType = ProtocolType.Mail,
+                        type = Participant.Type.Client,
+                        subProtocolType = SubProtocolType.MailTo
                     }
                 },
                 culture = "en-US",
