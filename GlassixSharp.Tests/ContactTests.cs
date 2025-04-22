@@ -40,7 +40,7 @@ namespace GlassixSharp.Tests
                 field2 = "This is a test ticket for retrieving contact."
             };
 
-            var createResult = await _client!.CreateTicketAsync(createRequest);
+            var createResult = await _ticketsClient!.CreateTicketAsync(createRequest);
             Assert.True(createResult.Success);
 
             // Get the contact ID from the created ticket
@@ -48,7 +48,7 @@ namespace GlassixSharp.Tests
             Assert.NotEqual(Guid.Empty, contactId);
 
             // Act
-            var result = await _client!.GetContactAsync(contactId);
+            var result = await _contactsClient!.GetContactAsync(contactId);
 
             // Assert
             Assert.True(result.Success);
@@ -59,7 +59,7 @@ namespace GlassixSharp.Tests
             Assert.Null(result.Error);
 
             // Cleanup
-            await _client!.SetTicketStateAsync(createResult.Data.id, Ticket.State.Closed);
+            await _ticketsClient!.SetTicketStateAsync(createResult.Data.id, Ticket.State.Closed);
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace GlassixSharp.Tests
                 field2 = "This is a test ticket for updating contact name."
             };
 
-            var createResult = await _client!.CreateTicketAsync(createRequest);
+            var createResult = await _ticketsClient!.CreateTicketAsync(createRequest);
             Assert.True(createResult.Success);
 
             // Get the contact ID from the created ticket
@@ -99,7 +99,7 @@ namespace GlassixSharp.Tests
             var newName = $"Updated Contact {Guid.NewGuid()}";
 
             // Act
-            var result = await _client!.SetContactNameAsync(contactId, newName);
+            var result = await _contactsClient!.SetContactNameAsync(contactId, newName);
 
             // Assert
             Assert.True(result.Success);
@@ -108,12 +108,12 @@ namespace GlassixSharp.Tests
             Assert.Null(result.Error);
 
             // Verify the name was updated
-            var contactResult = await _client!.GetContactAsync(contactId);
+            var contactResult = await _contactsClient!.GetContactAsync(contactId);
             Assert.True(contactResult.Success);
             Assert.Equal(newName, contactResult.Data.name);
 
             // Cleanup
-            await _client!.SetTicketStateAsync(createResult.Data.id, Ticket.State.Closed);
+            await _ticketsClient!.SetTicketStateAsync(createResult.Data.id, Ticket.State.Closed);
         }
     }
 } 
