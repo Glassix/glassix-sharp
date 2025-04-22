@@ -1,6 +1,6 @@
 ﻿using GlassixSharp.Models;
-using GlassixSharp.Models.Requests;
 using GlassixSharp.Models.Responses;
+using GlassixSharp.Tickets.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

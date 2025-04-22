@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GlassixSharp.Models.Responses
+namespace GlassixSharp.Tickets.Models
 {
     /// <summary>
     /// Response containing a list of tickets

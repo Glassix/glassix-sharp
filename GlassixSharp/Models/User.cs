@@ -50,7 +50,7 @@ namespace GlassixSharp.Models
         /// Tickets assigned to BOT will not send any automatic messages from our platform.
         /// BOT and API users can't login into our platform, they can only use the REST API.
         /// </summary>
-        public string type { get; set; }
+        public Type type { get; set; }
 
         /// <summary>
         /// Full name of the user. This value is not exposed to customers.
@@ -102,6 +102,14 @@ namespace GlassixSharp.Models
             Male = 1,
             Female = 2,
             notApplicable = 9
+        }
+
+        public enum Type
+        {
+            UNDEFINED,
+            AGENT,
+            BOT,
+            API
         }
     }
 }

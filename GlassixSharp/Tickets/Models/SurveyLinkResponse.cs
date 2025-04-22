@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlassixSharp.Models.Responses
+namespace GlassixSharp.Tickets.Models
 {
-    public class SetDepartmentResponse
+    public class SurveyLinkResponse
     {
-        public int ticketId { get; set; }
+        public Uri surveyLink { get; set; }
     }
 }

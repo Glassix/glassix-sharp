@@ -1,4 +1,4 @@
-namespace GlassixSharp.Models.Requests
+namespace GlassixSharp.Tickets.Models
 {
     /// <summary>
     /// Request to update ticket fields

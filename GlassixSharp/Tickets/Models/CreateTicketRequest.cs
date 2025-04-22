@@ -1,8 +1,9 @@
+using GlassixSharp.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GlassixSharp.Models.Requests
+namespace GlassixSharp.Tickets.Models
 {
     /// <summary>
     /// Request to create a new ticket

@@ -1,4 +1,5 @@
 ﻿using GlassixSharp.Models;
+using GlassixSharp.Protocols.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

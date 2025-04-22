@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GlassixSharp.Models.Requests
+namespace GlassixSharp.Tickets.Models
 {
     /// <summary>
     /// Request to send a message in a ticket

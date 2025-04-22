@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GlassixSharp.Models.Requests
+namespace GlassixSharp.Tickets.Models
 {
     /// <summary>
     /// Request to set a ticket's state

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlassixSharp.Models.Requests
+namespace GlassixSharp.Tickets.Models
 {
     public class TicketRenderOptions
     {

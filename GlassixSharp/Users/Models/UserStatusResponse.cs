@@ -1,4 +1,4 @@
-namespace GlassixSharp.Models.Responses
+namespace GlassixSharp.Users.Models
 {
     /// <summary>
     /// Response containing a user's status
