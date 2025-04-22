@@ -96,7 +96,7 @@ namespace GlassixSharp
 
                 if (response.IsSuccess)
                 {
-                    if(string.IsNullOrEmpty(response.Data.access_token))
+                    if (string.IsNullOrEmpty(response.Data.access_token))
                         throw new Exception("Access token is empty");
 
                     DateTime expiresAt = DateTime.UtcNow.AddSeconds(response.Data.expires_in);
@@ -124,12 +124,7 @@ namespace GlassixSharp
         /// <param name="requiresAuth">Whether the request requires authentication</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>API response</returns>
-        private async Task<ApiResponse<T>> SendRequestAsync<T>(
-            HttpMethod method,
-            string url,
-            object body = null,
-            bool requiresAuth = true,
-            CancellationToken cancellationToken = default)
+        private async Task<ApiResponse<T>> SendRequestAsync<T>(HttpMethod method, string url, object body = null, bool requiresAuth = true, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -142,11 +137,11 @@ namespace GlassixSharp
                 }
 
                 // Add custom headers
-                if(_customHeaders != null && _customHeaders.Count > 0)
+                if (_customHeaders != null && _customHeaders.Count > 0)
                 {
                     foreach (var header in _customHeaders)
                     {
-                        if(!string.IsNullOrEmpty(header.Key) && !string.IsNullOrEmpty(header.Value))
+                        if (!string.IsNullOrEmpty(header.Key) && !string.IsNullOrEmpty(header.Value))
                         {
                             request.Headers.TryAddWithoutValidation(header.Key, header.Value);
                         }
@@ -170,12 +165,28 @@ namespace GlassixSharp
                         return ApiResponse<T>.Success((T)(object)new EmptyResponse());
                     }
 
+                    // Check the Content-Type header to determine how to process the response
+                    string contentType = response.Content.Headers.ContentType?.MediaType?.ToLowerInvariant();
+
+                    if (contentType == "text/html" && typeof(T) == typeof(string))
+                    {
+                        var html = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        return ApiResponse<T>.Success((T)(object)html);
+                    }
+
+                    if (contentType == "application/pdf" && typeof(T) == typeof(byte[]))
+                    {
+                        var bytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                        return ApiResponse<T>.Success((T)(object)bytes);
+                    }
+
+
                     var result = JsonSerializer.Deserialize<T>(content, _jsonSerializerOptions);
                     return ApiResponse<T>.Success(result);
                 }
 
                 string errorMessage = response.ReasonPhrase;
-                if(!string.IsNullOrEmpty(content))
+                if (!string.IsNullOrEmpty(content))
                 {
                     errorMessage = content;
                 }
@@ -233,9 +244,7 @@ namespace GlassixSharp
             return string.Join("&", queryParams);
         }
 
-        #region API Methods
-
-        // Tickets
+        #region Tickets
 
         /// <summary>
         /// Creates a new ticket
@@ -243,9 +252,7 @@ namespace GlassixSharp
         /// <param name="request">The ticket creation request</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The created ticket</returns>
-        public async Task<(bool Success, Ticket Data, string Error)> CreateTicketAsync(
-            CreateTicketRequest request,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, Ticket Data, string Error)> CreateTicketAsync(CreateTicketRequest request, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<Ticket>(
                 HttpMethod.Post,
@@ -263,9 +270,7 @@ namespace GlassixSharp
         /// <param name="ticketId">ID of the ticket to get</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The requested ticket</returns>
-        public async Task<(bool Success, Ticket Data, string Error)> GetTicketAsync(
-            int ticketId,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, Ticket Data, string Error)> GetTicketAsync(int ticketId, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<Ticket>(
                 HttpMethod.Get,
@@ -287,13 +292,7 @@ namespace GlassixSharp
         /// <param name="page">Page token for pagination (optional)</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of tickets matching the criteria</returns>
-        public async Task<(bool Success, TicketListResponse Data, string Error)> ListTicketsAsync(
-            DateTime since,
-            DateTime until,
-            Ticket.State? ticketState = null,
-            SortOrder? sortOrder = null,
-            string page = null,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, TicketListResponse Data, string Error)> ListTicketsAsync(DateTime since, DateTime until, Ticket.State? ticketState = null, SortOrder? sortOrder = null, string page = null, CancellationToken cancellationToken = default)
         {
             var queryParams = new Dictionary<string, object>
             {
@@ -333,10 +332,7 @@ namespace GlassixSharp
         /// <param name="request">The message to send</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The message transaction</returns>
-        public async Task<(bool Success, Transaction Data, string Error)> SendMessageAsync(
-            int ticketId,
-            SendMessageRequest request,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, Transaction Data, string Error)> SendMessageAsync(int ticketId, SendMessageRequest request, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<Transaction>(
                 HttpMethod.Post,
@@ -359,14 +355,7 @@ namespace GlassixSharp
         /// <param name="body">Additional parameters (optional)</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
-        public async Task<(bool Success, MessageResponse Data, string Error)> SetTicketStateAsync(
-            int ticketId,
-            Ticket.State nextState,
-            bool getTicket = false,
-            bool sendTicketStateChangedMessage = true,
-            bool enableWebhook = true,
-            SetTicketStateRequest body = null,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, MessageResponse Data, string Error)> SetTicketStateAsync(int ticketId, Ticket.State nextState, bool getTicket = false, bool sendTicketStateChangedMessage = true, bool enableWebhook = true, SetTicketStateRequest body = null, CancellationToken cancellationToken = default)
         {
             var queryParams = new Dictionary<string, object>
             {
@@ -396,10 +385,7 @@ namespace GlassixSharp
         /// <param name="request">The fields to update</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
-        public async Task<(bool Success, string Error)> SetTicketFieldsAsync(
-            int ticketId,
-            SetTicketFieldsRequest request,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, string Error)> SetTicketFieldsAsync(int ticketId, SetTicketFieldsRequest request, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<EmptyResponse>(
                 HttpMethod.Put,
@@ -418,10 +404,7 @@ namespace GlassixSharp
         /// <param name="tags">Tags to add</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The updated list of tags</returns>
-        public async Task<(bool Success, List<string> Data, string Error)> AddTicketTagsAsync(
-            int ticketId,
-            List<string> tags,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, List<string> Data, string Error)> AddTicketTagsAsync(int ticketId, List<string> tags, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<List<string>>(
                 HttpMethod.Post,
@@ -440,10 +423,7 @@ namespace GlassixSharp
         /// <param name="tag">Tag to remove</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The updated list of tags</returns>
-        public async Task<(bool Success, List<string> Data, string Error)> RemoveTicketTagAsync(
-            int ticketId,
-            string tag,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, List<string> Data, string Error)> RemoveTicketTagAsync(int ticketId, string tag, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<List<string>>(
                 HttpMethod.Delete,
@@ -455,15 +435,257 @@ namespace GlassixSharp
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
 
-        // Users
+        /// <summary>
+        /// Updates a participant's name within a ticket
+        /// </summary>
+        /// <param name="ticketId">ID of the ticket</param>
+        /// <param name="participantId">ID of the participant in the ticket</param>
+        /// <param name="name">New name for the participant</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Result of the operation</returns>
+        public async Task<(bool Success, string Error)> SetParticipantNameAsync(int ticketId, int participantId, string name, CancellationToken cancellationToken = default)
+        {
+            var request = new
+            {
+                id = participantId,
+                name = name
+            };
+
+            var response = await SendRequestAsync<EmptyResponse>(
+                HttpMethod.Put,
+                $"{_baseUrl}/tickets/setparticipantname/{ticketId}",
+                request,
+                true,
+                cancellationToken).ConfigureAwait(false);
+
+            return (response.IsSuccess, response.ErrorMessage);
+        }
+
+        /// <summary>
+        /// Assigns a new owner to a ticket
+        /// </summary>
+        /// <param name="ticketId">ID of the ticket</param>
+        /// <param name="keepCurrentOwnerInConversation">Whether to keep the current owner as a participant</param>
+        /// <param name="nextOwnerUserName">Email address of the new owner</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Result of the operation</returns>
+        public async Task<(bool Success, string Error)> SetTicketOwnerAsync(int ticketId, string nextOwnerUserName, bool keepCurrentOwnerInConversation = false, CancellationToken cancellationToken = default)
+        {
+            Dictionary<string, object> queryParams = new Dictionary<string, object>
+            {
+                ["keepCurrentOwnerInConversation"] = keepCurrentOwnerInConversation,
+                ["nextOwnerUserName"] = nextOwnerUserName
+            };
+
+            string queryString = BuildQueryString(queryParams);
+            string url = $"{_baseUrl}/tickets/setowner/{ticketId}?{queryString}";
+
+            var response = await SendRequestAsync<EmptyResponse>(
+                HttpMethod.Put,
+                url,
+                null,
+                true,
+                cancellationToken).ConfigureAwait(false);
+
+            return (response.IsSuccess, response.ErrorMessage);
+        }
+
+        /// <summary>
+        /// Assigns an available user to a ticket
+        /// </summary>
+        /// <param name="ticketId">ID of the ticket</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Result of the operation</returns>
+        public async Task<(bool Success, string Error)> AssignAvailableUserAsync(int ticketId, CancellationToken cancellationToken = default)
+        {
+            var response = await SendRequestAsync<EmptyResponse>(
+                HttpMethod.Put,
+                $"{_baseUrl}/tickets/assignavailableuser/{ticketId}",
+                null,
+                true,
+                cancellationToken).ConfigureAwait(false);
+
+            return (response.IsSuccess, response.ErrorMessage);
+        }
+
+        /// <summary>
+        /// Moves a ticket to another department
+        /// </summary>
+        /// <param name="ticketId">ID of the ticket</param>
+        /// <param name="departmentId">ID of the target department</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>ID of the new ticket in the target department</returns>
+        public async Task<(bool Success, int NewTicketId, string Error)> SetDepartmentAsync(int ticketId, Guid departmentId, CancellationToken cancellationToken = default)
+        {
+            var request = new
+            {
+                departmentId = departmentId.ToString()
+            };
+
+            var response = await SendRequestAsync<SetDepartmentResponse>(
+                HttpMethod.Put,
+                $"{_baseUrl}/tickets/setdepartment/{ticketId}",
+                request,
+                true,
+                cancellationToken).ConfigureAwait(false);
+
+            return (response.IsSuccess, response.Data?.ticketId ?? 0, response.ErrorMessage);
+        }
+
+        /// <summary>
+        /// Adds a note to a ticket (visible only to agents)
+        /// </summary>
+        /// <param name="ticketId">ID of the ticket</param>
+        /// <param name="text">Text content of the note</param>
+        /// <param name="html">HTML content of the note</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Result of the operation</returns>
+        public async Task<(bool Success, string Error)> AddNoteAsync(int ticketId, string text = null, string html = null, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(text) && string.IsNullOrEmpty(html))
+            {
+                throw new ArgumentException("Either text or html must be provided.");
+            }
+
+            var request = new
+            {
+                text = text,
+                html = html
+            };
+
+            var response = await SendRequestAsync<EmptyResponse>(
+                HttpMethod.Post,
+                $"{_baseUrl}/tickets/addnote/{ticketId}",
+                request,
+                true,
+                cancellationToken).ConfigureAwait(false);
+
+            return (response.IsSuccess, response.ErrorMessage);
+        }
+
+        /// <summary>
+        /// Permanently deletes (scrambles) a ticket's data
+        /// </summary>
+        /// <param name="ticketId">ID of the ticket</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Result of the operation</returns>
+        public async Task<(bool Success, string Error)> ScrambleTicketAsync(int ticketId, CancellationToken cancellationToken = default)
+        {
+            var response = await SendRequestAsync<EmptyResponse>(
+                HttpMethod.Delete,
+                $"{_baseUrl}/tickets/scramble/{ticketId}",
+                null,
+                true,
+                cancellationToken).ConfigureAwait(false);
+
+            return (response.IsSuccess, response.ErrorMessage);
+        }
+
+        /// <summary>
+        /// Generates a PDF document of the ticket
+        /// </summary>
+        /// <param name="ticketId">ID of the ticket</param>
+        /// <param name="includeDetails">Whether to include ticket details</param>
+        /// <param name="includeConversationLink">Whether to include conversation link</param>
+        /// <param name="includeNotes">Whether to include notes</param>
+        /// <param name="replaceContentId">Whether to replace content IDs</param>
+        /// <param name="showParticipantType">Whether to show participant types</param>
+        /// <param name="fontSizeInPixels">Font size in pixels</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>PDF file as byte array</returns>
+        public async Task<(bool Success, byte[] PdfData, string Error)> GetTicketPdfAsync(int ticketId, TicketRenderOptions ticketRenderOptions, CancellationToken cancellationToken = default)
+        {
+            var response = await SendRequestAsync<byte[]>(
+                HttpMethod.Post,
+                $"{_baseUrl}/tickets/pdf/{ticketId}",
+                ticketRenderOptions,
+                true,
+                cancellationToken).ConfigureAwait(false);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
+        }
+
+        /// <summary>
+        /// Generates an HTML document of the ticket
+        /// </summary>
+        /// <param name="ticketId">ID of the ticket</param>
+        /// <param name="includeDetails">Whether to include ticket details</param>
+        /// <param name="includeConversationLink">Whether to include conversation link</param>
+        /// <param name="includeNotes">Whether to include notes</param>
+        /// <param name="fontSizeInPixels">Font size in pixels</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>HTML content as string</returns>
+        public async Task<(bool Success, string HtmlContent, string Error)> GetTicketHtmlAsync(int ticketId, TicketRenderOptions ticketRenderOptions, CancellationToken cancellationToken = default)
+        {
+            var response = await SendRequestAsync<string>(
+                HttpMethod.Post,
+                $"{_baseUrl}/tickets/html/{ticketId}",
+                ticketRenderOptions,
+                true,
+                cancellationToken).ConfigureAwait(false);
+
+            return (response.IsSuccess, response.Data, response.ErrorMessage);
+        }
+
+        /// <summary>
+        /// Generates a survey link for a ticket
+        /// </summary>
+        /// <param name="ticketId">ID of the ticket</param>
+        /// <param name="surveyId">ID of the survey</param>
+        /// <param name="participantId">ID of the participant (0 for main participant)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The generated survey link</returns>
+        public async Task<(bool Success, Uri SurveyLink, string Error)> GenerateSurveyLinkAsync(int ticketId, int surveyId, int participantId = 0, CancellationToken cancellationToken = default)
+        {
+            var request = new
+            {
+                surveyId = surveyId,
+                participantId = participantId
+            };
+
+            var response = await SendRequestAsync<SurveyLinkResponse>(
+                HttpMethod.Post,
+                $"{_baseUrl}/tickets/generatesurveylink/{ticketId}",
+                request,
+                true,
+                cancellationToken).ConfigureAwait(false);
+
+            return (response.IsSuccess, response.Data?.surveyLink, response.ErrorMessage);
+        }
+
+        /// <summary>
+        /// Sets a summary for a ticket
+        /// </summary>
+        /// <param name="ticketId">ID of the ticket</param>
+        /// <param name="summary">The summary text</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Result of the operation</returns>
+        public async Task<(bool Success, string Error)> SetTicketSummaryAsync(int ticketId, string summary, CancellationToken cancellationToken = default)
+        {
+            var request = new
+            {
+                summary = summary
+            };
+
+            var response = await SendRequestAsync<EmptyResponse>(
+                HttpMethod.Post,
+                $"{_baseUrl}/tickets/setsummary/{ticketId}",
+                request,
+                true,
+                cancellationToken).ConfigureAwait(false);
+
+            return (response.IsSuccess, response.ErrorMessage);
+        }
+        #endregion
+
+        #region Users
 
         /// <summary>
         /// Gets all users in the department
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of users</returns>
-        public async Task<(bool Success, List<User> Data, string Error)> GetAllUsersAsync(
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, List<User> Data, string Error)> GetAllUsersAsync(CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<List<User>>(
                 HttpMethod.Get,
@@ -481,9 +703,7 @@ namespace GlassixSharp
         /// <param name="nextStatus">The new status</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
-        public async Task<(bool Success, string Error)> SetUserStatusAsync(
-            User.UserStatus nextStatus,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, string Error)> SetUserStatusAsync(User.UserStatus nextStatus, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<EmptyResponse>(
                 HttpMethod.Put,
@@ -500,8 +720,7 @@ namespace GlassixSharp
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The user's status</returns>
-        public async Task<(bool Success, UserStatusResponse Data, string Error)> GetUserStatusAsync(
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, UserStatusResponse Data, string Error)> GetUserStatusAsync(CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<UserStatusResponse>(
                 HttpMethod.Get,
@@ -512,8 +731,9 @@ namespace GlassixSharp
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
+        #endregion
 
-        // Contacts
+        #region Contacts
 
         /// <summary>
         /// Gets a contact by ID
@@ -521,9 +741,7 @@ namespace GlassixSharp
         /// <param name="contactId">ID of the contact</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The requested contact</returns>
-        public async Task<(bool Success, Contact Data, string Error)> GetContactAsync(
-            Guid contactId,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, Contact Data, string Error)> GetContactAsync(Guid contactId, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<Contact>(
                 HttpMethod.Get,
@@ -542,10 +760,7 @@ namespace GlassixSharp
         /// <param name="nextName">The new name</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
-        public async Task<(bool Success, MessageResponse Data, string Error)> SetContactNameAsync(
-            Guid contactId,
-            string nextName,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, MessageResponse Data, string Error)> SetContactNameAsync(Guid contactId, string nextName, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<MessageResponse>(
                 HttpMethod.Put,
@@ -556,8 +771,9 @@ namespace GlassixSharp
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
+        #endregion
 
-        // Protocol
+        #region Protocol
 
         /// <summary>
         /// Sends a message through a protocol (WhatsApp, SMS, etc.)
@@ -565,9 +781,7 @@ namespace GlassixSharp
         /// <param name="request">The message to send</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The sent message</returns>
-        public async Task<(bool Success, Message Data, string Error)> SendProtocolMessageAsync(
-            Message request,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, Message Data, string Error)> SendProtocolMessageAsync(Message request, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<Message>(
                 HttpMethod.Post,
@@ -578,8 +792,9 @@ namespace GlassixSharp
 
             return (response.IsSuccess, response.Data, response.ErrorMessage);
         }
+        #endregion
 
-        // Webhooks
+        #region Webhooks
 
         /// <summary>
         /// Gets webhook events
@@ -587,9 +802,7 @@ namespace GlassixSharp
         /// <param name="deleteEvents">Whether to delete events after retrieving them</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of webhook events</returns>
-        public async Task<(bool Success, List<WebhookEvent> Data, string Error)> GetWebhookEventsAsync(
-            bool deleteEvents = true,
-            CancellationToken cancellationToken = default)
+        public async Task<(bool Success, List<WebhookEvent> Data, string Error)> GetWebhookEventsAsync(bool deleteEvents = true, CancellationToken cancellationToken = default)
         {
             var response = await SendRequestAsync<List<WebhookEvent>>(
                 HttpMethod.Get,
