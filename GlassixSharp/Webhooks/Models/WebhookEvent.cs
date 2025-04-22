@@ -26,6 +26,15 @@ namespace GlassixSharp.Webhooks.Models
         /// Changes included in the event
         /// </summary>
         public List<WebhookChange> changes { get; set; }
+
+        /// <summary>
+        /// Queue parameter
+        /// </summary>
+        public string queueReceiptHandle { get; set; }
+        /// <summary>
+        /// Queue parameter
+        /// </summary>
+        public string queueMessageId { get; set; }
     }
     
     /// <summary>
