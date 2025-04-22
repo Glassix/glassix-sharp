@@ -78,7 +78,7 @@ namespace GlassixSharp.Models
         /// <summary>
         /// Type of identifier (PhoneNumber, MailAddress, etc.)
         /// </summary>
-        public string identifierType { get; set; }
+        public IdentifierType identifierType { get; set; }
         
         /// <summary>
         /// The actual identifier value
@@ -100,5 +100,22 @@ namespace GlassixSharp.Models
         /// </summary>
         public bool isDeleted { get; set; }
         public bool isScrambled { get; set; }
+
+        public enum IdentifierType
+        {
+            Undefined = 0,
+            PhoneNumber = 1,
+            MailAddress = 2,
+            FacebookId = 3,
+            InstagramId = 4,
+            Web = 5,
+            InstagramIGSID = 6,
+            ClientViberID = 7,
+            ClientAppleBusinessChatID = 8,
+            ClientTwitterId = 9,
+            ClientGoogleBusinessMessagesId = 10,
+            ClientGoogleBusinessReviewerId = 11,
+            TikTokId = 12
+        }
     }
 }
