@@ -1,5 +1,4 @@
 ﻿using GlassixSharp.Models;
-using GlassixSharp.Models.Responses;
 using GlassixSharp.Users.Models;
 using System;
 using System.Collections.Generic;

@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace GlassixSharp.Models
+namespace GlassixSharp.Tickets.Models
 {
     public class Survey
     {

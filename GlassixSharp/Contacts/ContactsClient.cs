@@ -1,11 +1,11 @@
-﻿using GlassixSharp.Models;
-using GlassixSharp.Models.Responses;
+﻿using GlassixSharp.Contacts.Models;
+using GlassixSharp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static GlassixSharp.Models.ContactIdentifier;
+using static GlassixSharp.Contacts.Models.ContactIdentifier;
 
 namespace GlassixSharp.Contacts
 {

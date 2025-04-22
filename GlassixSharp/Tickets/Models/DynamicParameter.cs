@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GlassixSharp.Models
+namespace GlassixSharp.Tickets.Models
 {
     /// <summary>
     /// Custom-made parameters that are defined by the department. The values for these parameters will be collected during a chatbot conversation.

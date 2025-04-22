@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GlassixSharp.Models
+namespace GlassixSharp.Tickets.Models
 {
     public class CardData
     {

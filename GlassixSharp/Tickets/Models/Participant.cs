@@ -1,6 +1,7 @@
+using GlassixSharp.Models;
 using System;
 using System.Text.Json.Serialization;
-namespace GlassixSharp.Models
+namespace GlassixSharp.Tickets.Models
 {
     /// <summary>
     /// A participant is someone who belongs to a specific ticket. Each ticket has at least 2 participants, who can be either an agent or a customer.

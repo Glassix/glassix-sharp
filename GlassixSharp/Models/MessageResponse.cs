@@ -1,4 +1,4 @@
-namespace GlassixSharp.Models.Responses
+namespace GlassixSharp.Models
 {
     /// <summary>
     /// Response containing a message

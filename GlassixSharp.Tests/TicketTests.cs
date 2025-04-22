@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GlassixSharp.Models;
-using GlassixSharp.Models.Requests;
 using GlassixSharp.Tickets.Models;
 using Xunit;
 

@@ -1,4 +1,5 @@
 ﻿using GlassixSharp.Models;
+using GlassixSharp.Webhooks.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

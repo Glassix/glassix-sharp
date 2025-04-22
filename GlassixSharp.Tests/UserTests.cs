@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using GlassixSharp.Models;
+using GlassixSharp.Users.Models;
 using Xunit;
 
 namespace GlassixSharp.Tests

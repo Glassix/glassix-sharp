@@ -1,7 +1,7 @@
 using GlassixSharp.Models;
 using System;
 using System.Text.Json.Serialization;
-namespace GlassixSharp.Models
+namespace GlassixSharp.Tickets.Models
 {
     /// <summary>
     /// A Transaction represents an event that happened in a ticket such as a message, ticket state change,

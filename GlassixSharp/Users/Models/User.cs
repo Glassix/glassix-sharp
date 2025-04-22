@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace GlassixSharp.Models
+namespace GlassixSharp.Users.Models
 {
     /// <summary>
     /// A user represents an agent and can be assigned to many departments.

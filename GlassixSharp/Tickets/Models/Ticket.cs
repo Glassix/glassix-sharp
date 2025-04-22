@@ -1,9 +1,10 @@
 using GlassixSharp.Models;
+using GlassixSharp.Users.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GlassixSharp
+namespace GlassixSharp.Tickets.Models
 {
     public class Ticket
     {

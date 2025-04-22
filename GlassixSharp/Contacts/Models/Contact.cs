@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GlassixSharp.Models
+namespace GlassixSharp.Contacts.Models
 {
     /// <summary>
     /// Represents a contact in the Glassix system

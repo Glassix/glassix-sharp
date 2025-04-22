@@ -1,9 +1,11 @@
 using GlassixSharp.Protocols.Models;
+using GlassixSharp.Tickets.Models;
+using GlassixSharp.Users.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace GlassixSharp.Models
+namespace GlassixSharp.Webhooks.Models
 {
     /// <summary>
     /// Represents a webhook event

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace GlassixSharp.Models.Responses
+namespace GlassixSharp.Models
 {
     /// <summary>
     /// Response object from the token endpoint
