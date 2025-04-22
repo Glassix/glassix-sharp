@@ -9,6 +9,7 @@ A simple C# SDK for the Glassix API. This SDK makes it easy to interact with the
 - Simple error handling with tuples
 - Thread-safe implementation
 - Support for all major Glassix API endpoints
+- Modular client architecture with specialized clients for different API areas
 
 ## Installation
 
@@ -18,7 +19,7 @@ dotnet add package GlassixSharp
 
 ## Getting Started
 
-Initialize the client with your Glassix credentials:
+Initialize the clients with your Glassix credentials:
 
 ```csharp
 Credentials credentials = new Credentials(
@@ -29,15 +30,20 @@ Credentials credentials = new Credentials(
     timeoutSeconds: 120 // Optional, defaults to 60 seconds
 );
 
-// Initialize the client
-GlassixClient client = new GlassixClient(credentials);
+// Initialize clients for different API areas
+TicketsClient ticketsClient = new TicketsClient(credentials);
+UsersClient usersClient = new UsersClient(credentials);
+ContactsClient contactsClient = new ContactsClient(credentials);
+ProtocolsClient protocolsClient = new ProtocolsClient(credentials);
+WebhooksClient webhooksClient = new WebhooksClient(credentials);
 ```
 
 ## Examples
 
-### Creating a Ticket
+### Working with Tickets
 
 ```csharp
+// Creating a Ticket
 CreateTicketRequest request = new CreateTicketRequest
 {
     Field1 = "Customer Support Request",
@@ -53,46 +59,46 @@ CreateTicketRequest request = new CreateTicketRequest
     }
 };
 
-var (success, ticket, error) = await client.CreateTicketAsync(request);
-```
+var (success, ticket, error) = await ticketsClient.CreateTicketAsync(request);
 
-### Sending a Message in a Ticket
-
-```csharp
-SendMessageRequest request = new SendMessageRequest
+// Sending a Message in a Ticket
+SendMessageRequest messageRequest = new SendMessageRequest
 {
     Text = "Hello! How can I help you today?"
 };
 
-var (success, transaction, error) = await client.SendMessageAsync(12345, request);
-```
+var (msgSuccess, transaction, msgError) = await ticketsClient.SendMessageAsync(12345, messageRequest);
 
-### Getting a Ticket
+// Getting a Ticket
+var (getSuccess, retrievedTicket, getError) = await ticketsClient.GetTicketAsync(12345);
 
-```csharp
-var (success, ticket, error) = await client.GetTicketAsync(12345);
-```
-
-### Listing Tickets
-
-```csharp
+// Listing Tickets
 var since = DateTime.UtcNow.AddDays(-7);
 var until = DateTime.UtcNow;
 
-var (success, ticketList, error) = await client.ListTicketsAsync(
+var (listSuccess, ticketList, listError) = await ticketsClient.ListTicketsAsync(
     since, 
     until, 
     ticketState: Ticket.State.Open,
     sortOrder: SortOrder.Descending
 );
-```
 
-### Setting Ticket State
-
-```csharp
-var (success, response, error) = await client.SetTicketStateAsync(
+// Setting Ticket State
+var (stateSuccess, stateResponse, stateError) = await ticketsClient.SetTicketStateAsync(
     12345,
     nextState: Ticket.State.Closed
+);
+
+// Adding a note to a ticket
+var (noteSuccess, noteError) = await ticketsClient.AddNoteAsync(
+    12345,
+    text: "Internal note about this customer"
+);
+
+// Setting ticket fields
+var (fieldsSuccess, fieldsError) = await ticketsClient.SetTicketFieldsAsync(
+    12345,
+    new SetTicketFieldsRequest { /* fields to update */ }
 );
 ```
 
@@ -100,19 +106,32 @@ var (success, response, error) = await client.SetTicketStateAsync(
 
 ```csharp
 // Get all users
-var (success, users, error) = await client.GetAllUsersAsync();
+var (usersSuccess, users, usersError) = await usersClient.GetAllUsersAsync();
 
 // Set user status
-await client.SetUserStatusAsync(User.UserStatus.Online);
+var (setStatusSuccess, setStatusError) = await usersClient.SetUserStatusAsync(User.UserStatus.Online);
 
 // Get user status
-var (statusSuccess, status, statusError) = await client.GetUserStatusAsync();
+var (statusSuccess, status, statusError) = await usersClient.GetUserStatusAsync();
+```
+
+### Working with Contacts
+
+```csharp
+// Get a contact
+var (contactSuccess, contact, contactError) = await contactsClient.GetContactAsync(Guid.Parse("contact-guid-here"));
+
+// Set contact name
+var (nameSuccess, nameResponse, nameError) = await contactsClient.SetContactNameAsync(
+    Guid.Parse("contact-guid-here"),
+    "New Contact Name"
+);
 ```
 
 ### Sending Protocol Messages
 
 ```csharp
-var request = new SendProtocolMessageRequest
+var message = new Message
 {
     Text = "Hello from GlassixSharp!",
     ProtocolType = ProtocolType.WhatsApp,
@@ -120,58 +139,12 @@ var request = new SendProtocolMessageRequest
     To = "15559876543"
 };
 
-var (success, message, error) = await client.SendProtocolMessageAsync(request);
+var (success, sentMessage, error) = await protocolsClient.SendProtocolMessageAsync(message);
 ```
 
-## Dependency Injection in ASP.NET Core
-
-You can register the GlassixClient with the dependency injection container in ASP.NET Core:
+### Working with Webhooks
 
 ```csharp
-// Program.cs or Startup.cs
-public void ConfigureServices(IServiceCollection services)
-{
-    // Register Glassix client as a singleton
-    services.AddSingleton<IGlassixClient>(serviceProvider => 
-    {
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        
-        Credentials credentials = new Credentials(
-            workspaceName: configuration["Glassix:WorkspaceName"],
-            userName: configuration["Glassix:UserName"],
-            apiKey: Guid.Parse(configuration["Glassix:ApiKey"]),
-            apiSecret: configuration["Glassix:ApiSecret"],
-            timeoutSeconds: int.Parse(configuration["Glassix:TimeoutSeconds"] ?? "60")
-        );
-        
-        return new GlassixClient(credentials);
-    });
-    
-    // Add other services...
-}
+// Get webhook events
+var (success, events, error) = await webhooksClient.GetWebhookEventsAsync(deleteEvents: true);
 ```
-
-## Usage in a Service Class
-
-Here's an example of using the Glassix client in a service class:
-
-```csharp
-public class TicketService
-{
-    private readonly IGlassixClient _glassixClient;
-    private readonly ILogger<TicketService> _logger;
-    
-    public TicketService(IGlassixClient glassixClient, ILogger<TicketService> logger)
-    {
-        _glassixClient = glassixClient;
-        _logger = logger;
-    }
-}
-```
-
-## Error Handling
-
-All API methods return a tuple with:
-1. A success boolean
-2. The response data (null if failed)
-3. An error message (null if succeeded)

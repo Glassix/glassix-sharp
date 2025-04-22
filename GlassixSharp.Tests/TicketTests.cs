@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GlassixSharp.Models;
-using GlassixSharp.Models.Requests;
+using GlassixSharp.Tickets.Models;
 using Xunit;
 
 namespace GlassixSharp.Tests
@@ -23,7 +23,7 @@ namespace GlassixSharp.Tests
             var until = DateTime.UtcNow;
 
             // Act
-            var result = await _client!.ListTicketsAsync(since, until);
+            var result = await _ticketsClient!.ListTicketsAsync(since, until);
 
             // Assert
             Assert.True(result.Success);
@@ -59,7 +59,7 @@ namespace GlassixSharp.Tests
             };
 
             // Act
-            var result = await _client!.CreateTicketAsync(request);
+            var result = await _ticketsClient!.CreateTicketAsync(request);
 
             // Assert
             Assert.True(result.Success);
@@ -71,7 +71,7 @@ namespace GlassixSharp.Tests
             // Cleanup - move ticket to closed state
             if (result.Data.id > 0)
             {
-                await _client!.SetTicketStateAsync(result.Data.id, Ticket.State.Closed);
+                await _ticketsClient!.SetTicketStateAsync(result.Data.id, Ticket.State.Closed);
             }
         }
 
@@ -103,11 +103,11 @@ namespace GlassixSharp.Tests
                 field2 = "This is a test ticket for getting by ID."
             };
 
-            var createResult = await _client!.CreateTicketAsync(createRequest);
+            var createResult = await _ticketsClient!.CreateTicketAsync(createRequest);
             Assert.True(createResult.Success);
 
             // Act
-            var result = await _client!.GetTicketAsync(createResult.Data.id);
+            var result = await _ticketsClient!.GetTicketAsync(createResult.Data.id);
 
             // Assert
             Assert.True(result.Success);
@@ -117,7 +117,7 @@ namespace GlassixSharp.Tests
             Assert.Null(result.Error);
 
             // Cleanup
-            await _client!.SetTicketStateAsync(result.Data.id, Ticket.State.Closed);
+            await _ticketsClient!.SetTicketStateAsync(result.Data.id, Ticket.State.Closed);
         }
 
         [Fact]
@@ -147,7 +147,7 @@ namespace GlassixSharp.Tests
                 field2 = "This is a test ticket for sending messages."
             };
 
-            var createResult = await _client!.CreateTicketAsync(createRequest);
+            var createResult = await _ticketsClient!.CreateTicketAsync(createRequest);
             Assert.True(createResult.Success);
 
             var messageText = $"Test message sent at {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}";
@@ -157,7 +157,7 @@ namespace GlassixSharp.Tests
             };
 
             // Act
-            var result = await _client!.SendMessageAsync(createResult.Data.id, messageRequest);
+            var result = await _ticketsClient!.SendMessageAsync(createResult.Data.id, messageRequest);
 
             // Assert
             Assert.True(result.Success);
@@ -166,7 +166,7 @@ namespace GlassixSharp.Tests
             Assert.Null(result.Error);
 
             // Cleanup
-            await _client!.SetTicketStateAsync(createResult.Data.id, Ticket.State.Closed);
+            await _ticketsClient!.SetTicketStateAsync(createResult.Data.id, Ticket.State.Closed);
         }
 
         [Fact]
@@ -196,13 +196,13 @@ namespace GlassixSharp.Tests
                 field2 = "This is a test ticket for adding tags."
             };
 
-            var createResult = await _client!.CreateTicketAsync(createRequest);
+            var createResult = await _ticketsClient!.CreateTicketAsync(createRequest);
             Assert.True(createResult.Success);
 
             var tags = new List<string> { "test-tag", "automated-test" };
 
             // Act
-            var result = await _client!.AddTicketTagsAsync(createResult.Data.id, tags);
+            var result = await _ticketsClient!.AddTicketTagsAsync(createResult.Data.id, tags);
 
             // Assert
             Assert.True(result.Success);
@@ -212,7 +212,7 @@ namespace GlassixSharp.Tests
             Assert.Null(result.Error);
 
             // Cleanup
-            await _client!.SetTicketStateAsync(createResult.Data.id, Ticket.State.Closed);
+            await _ticketsClient!.SetTicketStateAsync(createResult.Data.id, Ticket.State.Closed);
         }
 
         [Fact]
@@ -242,16 +242,16 @@ namespace GlassixSharp.Tests
                 field2 = "This is a test ticket for removing tags."
             };
 
-            var createResult = await _client!.CreateTicketAsync(createRequest);
+            var createResult = await _ticketsClient!.CreateTicketAsync(createRequest);
             Assert.True(createResult.Success);
 
             // Add tags
             var tags = new List<string> { "test-tag", "automated-test" };
-            var addResult = await _client!.AddTicketTagsAsync(createResult.Data.id, tags);
+            var addResult = await _ticketsClient!.AddTicketTagsAsync(createResult.Data.id, tags);
             Assert.True(addResult.Success);
 
             // Act
-            var result = await _client!.RemoveTicketTagAsync(createResult.Data.id, "test-tag");
+            var result = await _ticketsClient!.RemoveTicketTagAsync(createResult.Data.id, "test-tag");
 
             // Assert
             Assert.True(result.Success);
@@ -261,7 +261,7 @@ namespace GlassixSharp.Tests
             Assert.Null(result.Error);
 
             // Cleanup
-            await _client!.SetTicketStateAsync(createResult.Data.id, Ticket.State.Closed);
+            await _ticketsClient!.SetTicketStateAsync(createResult.Data.id, Ticket.State.Closed);
         }
     }
 } 

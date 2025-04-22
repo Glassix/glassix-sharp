@@ -1,12 +1,21 @@
 using System;
 using GlassixSharp;
+using GlassixSharp.Contacts;
 using GlassixSharp.Models;
+using GlassixSharp.Protocols;
+using GlassixSharp.Tickets;
+using GlassixSharp.Users;
+using GlassixSharp.Webhooks;
 
 namespace GlassixSharp.Tests
 {
     public class TestFixture : IDisposable
     {
-        public IGlassixClient? Client { get; private set; }
+        public ContactsClient? contactsClient { get; private set; }
+        public ProtocolsClient? protocolsClient { get; private set; }
+        public TicketsClient? ticketsClient { get; private set; }
+        public UsersClient? usersClient { get; private set; }
+        public WebhooksClient? webhooksClient { get; private set; }
 
         public TestFixture()
         {
@@ -36,8 +45,14 @@ namespace GlassixSharp.Tests
                 isTestingEnvironment: true
             );
 
-            // Initialize client
-            Client = new GlassixClient(credentials);
+            // Initialize clients
+            contactsClient = new ContactsClient(credentials);
+            protocolsClient = new ProtocolsClient(credentials);
+            ticketsClient = new TicketsClient(credentials);
+            usersClient = new UsersClient(credentials);
+            webhooksClient = new WebhooksClient(credentials);
+
+            this.IsConfigured = true;
         }
 
         public void Dispose()
@@ -48,6 +63,6 @@ namespace GlassixSharp.Tests
         /// <summary>
         /// Checks if the client is configured with valid credentials
         /// </summary>
-        public bool IsConfigured => Client != null;
+        public bool IsConfigured = false;
     }
 } 
