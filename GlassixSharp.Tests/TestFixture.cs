@@ -1,8 +1,10 @@
 using System;
 using GlassixSharp;
+using GlassixSharp.CannedReplies;
 using GlassixSharp.Contacts;
 using GlassixSharp.Models;
 using GlassixSharp.Protocols;
+using GlassixSharp.Tenants;
 using GlassixSharp.Tickets;
 using GlassixSharp.Users;
 using GlassixSharp.Webhooks;
@@ -16,6 +18,8 @@ namespace GlassixSharp.Tests
         public TicketsClient? ticketsClient { get; private set; }
         public UsersClient? usersClient { get; private set; }
         public WebhooksClient? webhooksClient { get; private set; }
+        public CannedRepliesClient? cannedRepliesClient { get; private set; }
+        public TenantsClient? tenantsClient { get; private set; }
 
         public TestFixture()
         {
@@ -41,7 +45,7 @@ namespace GlassixSharp.Tests
                 userName,
                 apiKey,
                 apiSecret,
-                timeoutSeconds: 30,
+                timeoutSeconds: 60,
                 isTestingEnvironment: true
             );
 
@@ -51,6 +55,8 @@ namespace GlassixSharp.Tests
             ticketsClient = new TicketsClient(credentials);
             usersClient = new UsersClient(credentials);
             webhooksClient = new WebhooksClient(credentials);
+            cannedRepliesClient = new CannedRepliesClient(credentials);
+            tenantsClient = new TenantsClient(credentials);
 
             this.IsConfigured = true;
         }

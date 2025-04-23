@@ -42,7 +42,7 @@ namespace GlassixSharp.Tests
             Assert.Null(result.Error);
             
             // Status should be one of the known values
-            Assert.Contains(result.Data.Status, new[] { "Online", "Offline", "Break", "Break2", "Break3", "Break4", "Break5" });
+            Assert.Contains(result.Data.Status, new[] { User.UserStatus.Online, User.UserStatus.Offline, User.UserStatus.Break, User.UserStatus.Break2, User.UserStatus.Break3, User.UserStatus.Break4, User.UserStatus.Break5 });
         }
 
         [Theory]
@@ -65,43 +65,245 @@ namespace GlassixSharp.Tests
             
             var statusResult = await _usersClient!.GetUserStatusAsync();
             Assert.True(statusResult.Success);
-            
-            // Compare status correctly based on the enum
-            if (status == User.UserStatus.Online)
-            {
-                Assert.Equal("Online", statusResult.Data.Status);
-            }
-            else if (status == User.UserStatus.Offline)
-            {
-                Assert.Equal("Offline", statusResult.Data.Status);
-            }
-            else if (status == User.UserStatus.Break)
-            {
-                // The API might return "Break" or "Break[N]" depending on implementation
-                Assert.StartsWith("Break", statusResult.Data.Status);
-            }
+
+            Assert.Equal(status, statusResult.Data.Status);
         }
-        
+
         [Fact]
-        public async Task SetUserStatus_WithInvalidStatus_ShouldStillSucceed()
+        public async Task GetUserStatusLogs_ShouldReturnStatusLogs()
         {
             SkipIfNotConfigured();
 
-            // We're testing Break2-5 which exist in the enum but may not be directly supported by the API
-            var status = User.UserStatus.Break2;
-            
-            // Act
-            var result = await _usersClient!.SetUserStatusAsync(status);
+            // Arrange
+            var since = DateTime.Now.AddDays(-7);
+            var until = DateTime.Now;
 
-            // The API call should still succeed
+            // Act
+            var result = await _usersClient!.GetUserStatusLogsAsync(since, until);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.NotNull(result.Data);
+            Assert.Null(result.Error);
+        }
+
+        [Fact]
+        public async Task GetUserStatusLogsWithUserId_ShouldReturnStatusLogsForSpecificUser()
+        {
+            SkipIfNotConfigured();
+
+            // Arrange
+            var since = DateTime.Now.AddDays(-7);
+            var until = DateTime.Now;
+
+            // Get a user ID from the system
+            var usersResult = await _usersClient!.GetAllUsersAsync();
+            Assert.True(usersResult.Success);
+            Assert.NotEmpty(usersResult.Data);
+
+            var userId = usersResult.Data.First().id;
+
+            // Act
+            var result = await _usersClient!.GetUserStatusLogsAsync(since, until, userId);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.NotNull(result.Data);
+            Assert.Null(result.Error);
+        }
+
+        [Fact]
+        public async Task UpdateUser_ShouldUpdateUserDetails()
+        {
+            SkipIfNotConfigured();
+
+            // Arrange
+            var request = new UpdateUserRequest
+            {
+                ShortName = "Test Short Name",
+                FullName = "Test Full Name",
+                JobTitle = "Test Job Title"
+            };
+
+            // Act
+            var result = await _usersClient!.UpdateUserAsync(request);
+
+            // Assert
             Assert.True(result.Success);
             Assert.Null(result.Error);
-            
-            // Get the current status - we don't verify the specific value as the API might 
-            // handle these extended break states differently
-            var statusResult = await _usersClient!.GetUserStatusAsync();
-            Assert.True(statusResult.Success);
-            Assert.NotNull(statusResult.Data.Status);
+        }
+
+        [Fact]
+        public async Task AddUsers_ShouldAddUsersToSystem()
+        {
+            SkipIfNotConfigured();
+
+            // Arrange
+            var userType = User.Type.AGENT;
+            var role = "SystemUser";
+            var uniqueId = Guid.NewGuid().ToString().Substring(0, 8);
+
+            var users = new List<AddUserRequest>
+            {
+                new AddUserRequest
+                {
+                    UserName = $"testuser_{uniqueId}@example.com",
+                    UniqueArgument = $"test-arg-{uniqueId}"
+                }
+            };
+
+            // Act
+            var result = await _usersClient!.AddUsersAsync(userType, role, users);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.NotNull(result.Message);
+            Assert.Null(result.Error);
+        }
+
+        [Fact]
+        public async Task AddUsers_ShouldValidateRole()
+        {
+            SkipIfNotConfigured();
+
+            // Arrange
+            var userType = User.Type.AGENT;
+            var invalidRole = "InvalidRole";
+            var users = new List<AddUserRequest>
+            {
+                new AddUserRequest { UserName = "test@example.com", UniqueArgument = "test-arg" }
+            };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(() =>
+                _usersClient!.AddUsersAsync(userType, invalidRole, users));
+        }
+
+        [Fact]
+        public async Task AddUsers_ShouldValidateUserType()
+        {
+            SkipIfNotConfigured();
+
+            // Arrange
+            var invalidUserType = User.Type.UNDEFINED;
+            var role = "SystemUser";
+            var users = new List<AddUserRequest>
+            {
+                new AddUserRequest { UserName = "test@example.com", UniqueArgument = "test-arg" }
+            };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(() =>
+                _usersClient!.AddUsersAsync(invalidUserType, role, users));
+        }
+
+        [Fact]
+        public async Task SetUserUniqueArgument_ShouldUpdateUniqueArgument()
+        {
+            SkipIfNotConfigured();
+
+            // Arrange
+            var uniqueArgument = $"unique-arg-{Guid.NewGuid().ToString().Substring(0, 8)}";
+
+            // Act
+            var result = await _usersClient!.SetUserUniqueArgumentAsync(uniqueArgument);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Null(result.Error);
+        }
+
+        [Fact]
+        public async Task GetUserByUniqueArgument_ShouldReturnUser()
+        {
+            SkipIfNotConfigured();
+
+            // Arrange
+            // First set a unique argument
+            var uniqueArgument = $"unique-arg-{Guid.NewGuid().ToString().Substring(0, 8)}";
+            var setResult = await _usersClient!.SetUserUniqueArgumentAsync(uniqueArgument);
+            Assert.True(setResult.Success);
+
+            // Allow some time for the change to propagate
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
+            // Act
+            var result = await _usersClient!.GetUserByUniqueArgumentAsync(uniqueArgument);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.NotNull(result.Data);
+            Assert.Equal(uniqueArgument, result.Data.uniqueArgument);
+            Assert.Null(result.Error);
+        }
+
+        [Fact]
+        public async Task GetUserByUniqueArgument_ShouldValidateInput()
+        {
+            SkipIfNotConfigured();
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(() =>
+                _usersClient!.GetUserByUniqueArgumentAsync(string.Empty));
+        }
+
+        [Fact]
+        public async Task SetUserRoles_ShouldUpdateUserRoles()
+        {
+            SkipIfNotConfigured();
+
+            // Arrange
+            // Get a user from the system
+            var usersResult = await _usersClient!.GetAllUsersAsync();
+            Assert.True(usersResult.Success);
+            Assert.NotEmpty(usersResult.Data);
+
+            var userName = usersResult.Data.First().UserName;
+            var roles = new List<string> { "SystemUser", "ReadOnly" };
+
+            // Act
+            var result = await _usersClient!.SetUserRolesAsync(userName, roles);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Null(result.Error);
+        }
+
+        [Fact]
+        public async Task DeleteUser_ShouldDeleteUser()
+        {
+            SkipIfNotConfigured();
+
+            // Arrange
+            // First create a test user
+            var userType = User.Type.AGENT;
+            var role = "SystemUser";
+            var uniqueId = Guid.NewGuid().ToString().Substring(0, 8);
+            var userName = $"testdelete_{uniqueId}@example.com";
+
+            var users = new List<AddUserRequest>
+            {
+                new AddUserRequest
+                {
+                    UserName = userName,
+                    UniqueArgument = $"test-delete-{uniqueId}"
+                }
+            };
+
+            var addResult = await _usersClient!.AddUsersAsync(userType, role, users);
+            Assert.True(addResult.Success);
+
+            // Allow some time for the user to be created
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            // Act
+            var result = await _usersClient!.DeleteUserAsync(userName);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.NotNull(result.Data);
+            Assert.NotNull(result.Data.DeletedFromDepartments);
+            Assert.Null(result.Error);
         }
     }
 } 
