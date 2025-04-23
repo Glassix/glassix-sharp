@@ -11,7 +11,7 @@ namespace GlassixSharp.Users.Models
     /// </summary>
     public class AddUserRequest
     {
-        public string UserName { get; set; }
-        public string UniqueArgument { get; set; }
+        public string userName { get; set; }
+        public string uniqueArgument { get; set; }
     }
 }
