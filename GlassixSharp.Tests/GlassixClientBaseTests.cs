@@ -1,5 +1,7 @@
+using GlassixSharp.CannedReplies;
 using GlassixSharp.Contacts;
 using GlassixSharp.Protocols;
+using GlassixSharp.Tenants;
 using GlassixSharp.Tickets;
 using GlassixSharp.Users;
 using GlassixSharp.Webhooks;
@@ -19,6 +21,8 @@ namespace GlassixSharp.Tests
         protected readonly TicketsClient? _ticketsClient;
         protected readonly UsersClient? _usersClient;
         protected readonly WebhooksClient? _webhooksClient;
+        protected readonly CannedRepliesClient? _cannedRepliesClient;
+        protected readonly TenantsClient? _tenantsClient;
 
         protected GlassixClientBaseTests(TestFixture fixture)
         {
@@ -28,6 +32,8 @@ namespace GlassixSharp.Tests
             _ticketsClient = fixture.ticketsClient;
             _usersClient = fixture.usersClient;
             _webhooksClient = fixture.webhooksClient;
+            _cannedRepliesClient = fixture.cannedRepliesClient;
+            _tenantsClient = fixture.tenantsClient;
         }
 
         protected void SkipIfNotConfigured()

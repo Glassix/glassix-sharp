@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GlassixSharp.CannedReplies
 {
-    class CannedRepliesClient : BaseGlassixClient
+    public class CannedRepliesClient : BaseGlassixClient
     {
         public CannedRepliesClient(Credentials credentials, Dictionary<string, string>? headers = null) : base(credentials, headers)
         {

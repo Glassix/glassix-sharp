@@ -8,7 +8,7 @@ namespace GlassixSharp.Users.Models
         /// <summary>
         /// Status string (Offline, Break, Online)
         /// </summary>
-        public string Status { get; set; }
+        public User.UserStatus Status { get; set; }
         
         /// <summary>
         /// Status code (1: Offline, 2: Break, 10: Online)

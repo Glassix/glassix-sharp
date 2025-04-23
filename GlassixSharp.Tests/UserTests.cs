@@ -42,7 +42,7 @@ namespace GlassixSharp.Tests
             Assert.Null(result.Error);
             
             // Status should be one of the known values
-            Assert.Contains(result.Data.Status, new[] { "Online", "Offline", "Break", "Break2", "Break3", "Break4", "Break5" });
+            Assert.Contains(result.Data.Status, new[] { User.UserStatus.Online, User.UserStatus.Offline, User.UserStatus.Break, User.UserStatus.Break2, User.UserStatus.Break3, User.UserStatus.Break4, User.UserStatus.Break5 });
         }
 
         [Theory]
@@ -65,43 +65,8 @@ namespace GlassixSharp.Tests
             
             var statusResult = await _usersClient!.GetUserStatusAsync();
             Assert.True(statusResult.Success);
-            
-            // Compare status correctly based on the enum
-            if (status == User.UserStatus.Online)
-            {
-                Assert.Equal("Online", statusResult.Data.Status);
-            }
-            else if (status == User.UserStatus.Offline)
-            {
-                Assert.Equal("Offline", statusResult.Data.Status);
-            }
-            else if (status == User.UserStatus.Break)
-            {
-                // The API might return "Break" or "Break[N]" depending on implementation
-                Assert.StartsWith("Break", statusResult.Data.Status);
-            }
-        }
-        
-        [Fact]
-        public async Task SetUserStatus_WithInvalidStatus_ShouldStillSucceed()
-        {
-            SkipIfNotConfigured();
 
-            // We're testing Break2-5 which exist in the enum but may not be directly supported by the API
-            var status = User.UserStatus.Break2;
-            
-            // Act
-            var result = await _usersClient!.SetUserStatusAsync(status);
-
-            // The API call should still succeed
-            Assert.True(result.Success);
-            Assert.Null(result.Error);
-            
-            // Get the current status - we don't verify the specific value as the API might 
-            // handle these extended break states differently
-            var statusResult = await _usersClient!.GetUserStatusAsync();
-            Assert.True(statusResult.Success);
-            Assert.NotNull(statusResult.Data.Status);
+            Assert.Equal(status, statusResult.Data.Status);
         }
     }
 } 
