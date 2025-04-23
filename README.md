@@ -26,8 +26,7 @@ Credentials credentials = new Credentials(
     workspaceName: "your-workspace", 
     userName: "your-email@example.com", 
     apiKey: Guid.Parse("your-api-key"), 
-    apiSecret: "your-api-secret",
-    timeoutSeconds: 120 // Optional, defaults to 60 seconds
+    apiSecret: "your-api-secret"
 );
 
 // Initialize clients for different API areas
@@ -36,6 +35,8 @@ UsersClient usersClient = new UsersClient(credentials);
 ContactsClient contactsClient = new ContactsClient(credentials);
 ProtocolsClient protocolsClient = new ProtocolsClient(credentials);
 WebhooksClient webhooksClient = new WebhooksClient(credentials);
+TenantsClient tenantsClient = new TenantsClient(credentials);
+CannedRepliesClient cannedRepliesClient = new CannedRepliesClient(credentials);
 ```
 
 ## Examples
@@ -46,15 +47,15 @@ WebhooksClient webhooksClient = new WebhooksClient(credentials);
 // Creating a Ticket
 CreateTicketRequest request = new CreateTicketRequest
 {
-    Field1 = "Customer Support Request",
-    Culture = "en-US",
-    Participants = new List<CreateTicketParticipant>
+    field1 = "Customer Support Request",
+    culture = "en-US",
+    participants = new List<Participant>
     {
-        new CreateTicketParticipant
+        new Participant
         {
-            Name = "John Doe",
-            ProtocolType = ProtocolType.WhatsApp,
-            Identifier = "15551234567"
+            name = "John Doe",
+            protocolType = ProtocolType.WhatsApp,
+            identifier = "15551234567"
         }
     }
 };
@@ -64,7 +65,7 @@ var (success, ticket, error) = await ticketsClient.CreateTicketAsync(request);
 // Sending a Message in a Ticket
 SendMessageRequest messageRequest = new SendMessageRequest
 {
-    Text = "Hello! How can I help you today?"
+    text = "Hello! How can I help you today?"
 };
 
 var (msgSuccess, transaction, msgError) = await ticketsClient.SendMessageAsync(12345, messageRequest);
@@ -100,6 +101,74 @@ var (fieldsSuccess, fieldsError) = await ticketsClient.SetTicketFieldsAsync(
     12345,
     new SetTicketFieldsRequest { /* fields to update */ }
 );
+
+// Adding tags to a ticket
+var (tagsSuccess, updatedTags, tagsError) = await ticketsClient.AddTicketTagsAsync(
+    12345,
+    new List<string> { "urgent", "follow-up" }
+);
+
+// Removing a tag from a ticket
+var (removeTagSuccess, remainingTags, removeTagError) = await ticketsClient.RemoveTicketTagAsync(
+    12345,
+    "follow-up"
+);
+
+// Setting participant name
+var (setParticipantSuccess, setParticipantError) = await ticketsClient.SetParticipantNameAsync(
+    12345,
+    participantId: 1,
+    name: "Updated Customer Name"
+);
+
+// Changing ticket owner
+var (ownerSuccess, ownerError) = await ticketsClient.SetTicketOwnerAsync(
+    12345,
+    nextOwnerUserName: "agent@example.com"
+);
+
+// Assigning an available user
+var (assignSuccess, assignError) = await ticketsClient.AssignAvailableUserAsync(12345);
+
+// Moving ticket to another department
+var (moveDeptSuccess, newTicketId, moveDeptError) = await ticketsClient.SetDepartmentAsync(
+    12345,
+    departmentId: Guid.Parse("department-guid-here")
+);
+
+// Generating PDF of the ticket
+var ticketRenderOptions = new TicketRenderOptions
+{
+    includeDetails = true,
+    includeNotes = true,
+    fontSizeInPixels = 14
+};
+
+var (pdfSuccess, pdfData, pdfError) = await ticketsClient.GetTicketPdfAsync(
+    12345,
+    ticketRenderOptions
+);
+
+// Generating HTML of the ticket
+var (htmlSuccess, htmlContent, htmlError) = await ticketsClient.GetTicketHtmlAsync(
+    12345,
+    ticketRenderOptions
+);
+
+// Generating a survey link
+var (surveySuccess, surveyLink, surveyError) = await ticketsClient.GenerateSurveyLinkAsync(
+    12345,
+    surveyId: 1
+);
+
+// Setting a ticket summary
+var (summarySuccess, summaryError) = await ticketsClient.SetTicketSummaryAsync(
+    12345,
+    summary: "Customer requested a refund for order #38921"
+);
+
+// Scrambling (permanently deleting) ticket data
+var (scrambleSuccess, scrambleError) = await ticketsClient.ScrambleTicketAsync(12345);
 ```
 
 ### Working with Users
@@ -113,6 +182,53 @@ var (setStatusSuccess, setStatusError) = await usersClient.SetUserStatusAsync(Us
 
 // Get user status
 var (statusSuccess, status, statusError) = await usersClient.GetUserStatusAsync();
+
+// Get user status logs for a specific time period
+var since = DateTime.UtcNow.AddDays(-7);
+var until = DateTime.UtcNow;
+var (logsSuccess, userStatusLogs, logsError) = await usersClient.GetUserStatusLogsAsync(since, until);
+
+// Get user status logs for a specific user
+var userId = Guid.Parse("user-guid-here");
+var (userLogsSuccess, userLogs, userLogsError) = await usersClient.GetUserStatusLogsAsync(since, until, userId);
+
+// Update user information
+var updateRequest = new UpdateUserRequest
+{
+    shortName = "John",
+    fullName = "John Smith",
+    jobTitle = "Senior Support Agent"
+};
+var (updateSuccess, updateError) = await usersClient.UpdateUserAsync(updateRequest);
+
+// Add new users to the department
+var newUsers = new List<AddUserRequest>
+{
+    new AddUserRequest
+    {
+        userName = "newagent@example.com",
+        uniqueArgument = "agent123"
+    },
+    new AddUserRequest
+    {
+        userName = "newbot@example.com",
+        uniqueArgument = "bot456"
+    }
+};
+var (addSuccess, addMessage, addError) = await usersClient.AddUsersAsync("AGENT", "SystemUser", newUsers);
+
+// Delete a user from all departments
+var (deleteSuccess, deleteResponse, deleteError) = await usersClient.DeleteUserAsync("agent@example.com");
+
+// Set a unique argument for the current user
+var (argSuccess, argError) = await usersClient.SetUserUniqueArgumentAsync("agent789");
+
+// Get a user by their unique argument
+var (getUserSuccess, user, getUserError) = await usersClient.GetUserByUniqueArgumentAsync("agent789");
+
+// Set roles for a user
+var roles = new List<string> { "SystemUser", "WhatsApp" };
+var (rolesSuccess, rolesError) = await usersClient.SetUserRolesAsync("agent@example.com", roles);
 ```
 
 ### Working with Contacts
@@ -126,19 +242,40 @@ var (nameSuccess, nameResponse, nameError) = await contactsClient.SetContactName
     Guid.Parse("contact-guid-here"),
     "New Contact Name"
 );
+
+// Add an identifier to a contact
+var (addIdentifierSuccess, addIdentifierResponse, addIdentifierError) = await contactsClient.AddIdentifierAsync(
+    Guid.Parse("contact-guid-here"),
+    ContactIdentifier.IdentifierType.PhoneNumber,
+    "+15551234567"
+);
+
+// Set a unique argument for a contact
+var (uniqueArgSuccess, uniqueArgResponse, uniqueArgError) = await contactsClient.SetUniqueArgumentAsync(
+    Guid.Parse("contact-guid-here"),
+    "customer-123"
+);
+
+// Delete an identifier from a contact
+var (deleteIdentifierSuccess, deleteIdentifierResponse, deleteIdentifierError) = await contactsClient.DeleteIdentifierAsync(
+    Guid.Parse("contact-guid-here"),
+    contactIdentifierId: 1
+);
 ```
 
 ### Sending Protocol Messages
 
 ```csharp
+// Send a message through a protocol (WhatsApp, SMS, etc.)
 var message = new Message
 {
-    Text = "Hello from GlassixSharp!",
-    ProtocolType = ProtocolType.WhatsApp,
-    From = "15551234567",
-    To = "15559876543"
+    text = "Hello from GlassixSharp!",
+    protocolType = ProtocolType.WhatsApp,
+    from = "15551234567",
+    to = "15559876543"
 };
 
+// The message status will be automatically set to "Pending"
 var (success, sentMessage, error) = await protocolsClient.SendProtocolMessageAsync(message);
 ```
 
@@ -147,4 +284,27 @@ var (success, sentMessage, error) = await protocolsClient.SendProtocolMessageAsy
 ```csharp
 // Get webhook events
 var (success, events, error) = await webhooksClient.GetWebhookEventsAsync(deleteEvents: true);
+
+// Delete webhook events
+var (deleteSuccess, deleteError) = await webhooksClient.DeleteWebhookEventsAsync(events);
+```
+
+### Working with Tenants
+
+```csharp
+// Check if department is online
+var (onlineSuccess, isOnline, onlineError) = await tenantsClient.IsOnlineAsync(
+    departmentId: Guid.Parse("department-guid"),
+    protocolType: ProtocolType.WhatsApp
+);
+
+// Get all available tags
+var (tagsSuccess, tags, tagsError) = await tenantsClient.GetTagsAsync();
+```
+
+### Working with Canned Replies
+
+```csharp
+// Get all canned replies
+var (success, cannedReplies, error) = await cannedRepliesClient.GetAllCannedRepliesAsync();
 ```
