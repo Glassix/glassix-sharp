@@ -8,9 +8,14 @@ namespace GlassixSharp.Users.Models
 {
     public class UserInfoData
     {
-        public Guid userId;
-        public string userName;
-        public List<UserDateData> dates;
+        public Guid userId { get; set; }
+        public string userName { get; set; }
+        public List<UserDateData> dates { get; set; }
+
+        public UserInfoData()
+        {
+            // Parameterless constructor for deserialization
+        }
 
         public UserInfoData(Guid userId, string userName, List<UserDateData> dates)
         {
@@ -18,43 +23,55 @@ namespace GlassixSharp.Users.Models
             this.userName = userName;
             this.dates = dates;
         }
+
         public class UserDateData
         {
-            public DateTime date;
-            public TimeSpan totalOnlineTime;
-            public TimeSpan totalBreakTime;
-            public TimeSpan totalBreak2Time;
-            public TimeSpan totalBreak3Time;
-            public TimeSpan totalBreak4Time;
-            public TimeSpan totalBreak5Time;
-            public TimeSpan totalOfflineTime;
-            public List<UserStatusLog> statusLogs;
+            public DateTime date { get; set; }
+            public TimeSpan totalOnlineTime { get; set; }
+            public TimeSpan totalBreakTime { get; set; }
+            public TimeSpan totalBreak2Time { get; set; }
+            public TimeSpan totalBreak3Time { get; set; }
+            public TimeSpan totalBreak4Time { get; set; }
+            public TimeSpan totalBreak5Time { get; set; }
+            public TimeSpan totalOfflineTime { get; set; }
+            public List<UserStatusLog> statusLogs { get; set; }
 
-            public UserDateData(DateTime date, TimeSpan totalOnlineTimesSec, TimeSpan totalBreakTimesSec, TimeSpan totalBreak2TimesSec, TimeSpan totalBreak3TimesSec, TimeSpan totalBreak4TimesSec, TimeSpan totalBreak5TimesSec, TimeSpan totalOfflineTimesSec, List<UserStatusLog> userStatusLogs)
+            public UserDateData()
+            {
+                // Parameterless constructor for deserialization
+            }
+
+            public UserDateData(DateTime date, TimeSpan totalOnlineTime, TimeSpan totalBreakTime,
+                                TimeSpan totalBreak2Time, TimeSpan totalBreak3Time, TimeSpan totalBreak4Time,
+                                TimeSpan totalBreak5Time, TimeSpan totalOfflineTime, List<UserStatusLog> statusLogs)
             {
                 this.date = date;
-                this.totalOnlineTime = totalOnlineTimesSec;
-                this.totalBreakTime = totalBreakTimesSec;
-                this.totalBreak2Time = totalBreak2TimesSec;
-                this.totalBreak3Time = totalBreak3TimesSec;
-                this.totalBreak4Time = totalBreak4TimesSec;
-                this.totalBreak5Time = totalBreak5TimesSec;
-                this.totalOfflineTime = totalOfflineTimesSec;
-                this.statusLogs = userStatusLogs;
+                this.totalOnlineTime = totalOnlineTime;
+                this.totalBreakTime = totalBreakTime;
+                this.totalBreak2Time = totalBreak2Time;
+                this.totalBreak3Time = totalBreak3Time;
+                this.totalBreak4Time = totalBreak4Time;
+                this.totalBreak5Time = totalBreak5Time;
+                this.totalOfflineTime = totalOfflineTime;
+                this.statusLogs = statusLogs;
             }
 
             public class UserStatusLog
             {
-                public DateTime dateTime;
-                public string nextStatus;
-                public bool doNotDisturb;
+                public DateTime dateTime { get; set; }
+                public string nextStatus { get; set; }
+                public bool doNotDisturb { get; set; }
 
-                public UserStatusLog(DateTime statusChangeTimeStamp, string statusSet, bool doNotDisturb)
+                public UserStatusLog()
                 {
-                    this.dateTime = statusChangeTimeStamp;
-                    this.nextStatus = statusSet;
-                    this.doNotDisturb = doNotDisturb;
+                    // Parameterless constructor for deserialization
+                }
 
+                public UserStatusLog(DateTime dateTime, string nextStatus, bool doNotDisturb)
+                {
+                    this.dateTime = dateTime;
+                    this.nextStatus = nextStatus;
+                    this.doNotDisturb = doNotDisturb;
                 }
             }
         }

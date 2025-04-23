@@ -11,8 +11,8 @@ namespace GlassixSharp.Users.Models
     /// </summary>
     public class UpdateUserRequest
     {
-        public string ShortName { get; set; }
-        public string FullName { get; set; }
-        public string JobTitle { get; set; }
+        public string shortName { get; set; }
+        public string fullName { get; set; }
+        public string jobTitle { get; set; }
     }
 }

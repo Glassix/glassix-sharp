@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static GlassixSharp.Users.Models.UserInfoData;
 using static GlassixSharp.Users.Models.UserInfoData.UserDateData;
 
 namespace GlassixSharp.Users
@@ -76,7 +77,7 @@ namespace GlassixSharp.Users
         /// <param name="userId">Optional specific user ID to get logs for</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of user status logs</returns>
-        public async Task<(bool Success, List<UserStatusLog> Data, string Error)> GetUserStatusLogsAsync(DateTime since, DateTime until, Guid? userId = null, CancellationToken cancellationToken = default)
+        public async Task<(bool Success, List<UserInfoData> Data, string Error)> GetUserStatusLogsAsync(DateTime since, DateTime until, Guid? userId = null, CancellationToken cancellationToken = default)
         {
             var queryParams = new Dictionary<string, object>
             {
@@ -93,7 +94,7 @@ namespace GlassixSharp.Users
             if (!string.IsNullOrEmpty(queryString))
                 url += $"?{queryString}";
 
-            var response = await SendRequestAsync<List<UserStatusLog>>(
+            var response = await SendRequestAsync<List<UserInfoData>>(
                 HttpMethod.Get,
                 url,
                 null,
@@ -129,16 +130,16 @@ namespace GlassixSharp.Users
         /// <param name="users">List of users to add</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation with message</returns>
-        public async Task<(bool Success, string Message, string Error)> AddUsersAsync(User.Type userType, string role, List<AddUserRequest> users, CancellationToken cancellationToken = default)
+        public async Task<(bool Success, string Message, string Error)> AddUsersAsync(string userType, string role, List<AddUserRequest> users, CancellationToken cancellationToken = default)
         {
             if(role != "SystemUser" && role != "ReadOnly")
             {
                 throw new ArgumentException("Role must be either 'SystemUser' or 'ReadOnly'.", nameof(role));
             }
 
-            if (userType == User.Type.UNDEFINED)
+            if (userType != "AGENT" && userType != "BOT" && userType != "API")
             {
-                throw new ArgumentException("Invalid userType");
+                throw new ArgumentException("Invalid userType. Valid values are: AGENT, BOT, API");
             }
 
             var queryParams = new Dictionary<string, object>

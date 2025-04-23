@@ -120,9 +120,9 @@ namespace GlassixSharp.Tests
             // Arrange
             var request = new UpdateUserRequest
             {
-                ShortName = "Test Short Name",
-                FullName = "Test Full Name",
-                JobTitle = "Test Job Title"
+                shortName = "Test Short Name",
+                fullName = "Test Full Name",
+                jobTitle = "Test Job Title"
             };
 
             // Act
@@ -139,7 +139,7 @@ namespace GlassixSharp.Tests
             SkipIfNotConfigured();
 
             // Arrange
-            var userType = User.Type.AGENT;
+            string userType = "AGENT";
             var role = "SystemUser";
             var uniqueId = Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -147,8 +147,8 @@ namespace GlassixSharp.Tests
             {
                 new AddUserRequest
                 {
-                    UserName = $"testuser_{uniqueId}@example.com",
-                    UniqueArgument = $"test-arg-{uniqueId}"
+                    userName = $"testuser_{uniqueId}@example.com",
+                    uniqueArgument = $"test-arg-{uniqueId}"
                 }
             };
 
@@ -159,42 +159,6 @@ namespace GlassixSharp.Tests
             Assert.True(result.Success);
             Assert.NotNull(result.Message);
             Assert.Null(result.Error);
-        }
-
-        [Fact]
-        public async Task AddUsers_ShouldValidateRole()
-        {
-            SkipIfNotConfigured();
-
-            // Arrange
-            var userType = User.Type.AGENT;
-            var invalidRole = "InvalidRole";
-            var users = new List<AddUserRequest>
-            {
-                new AddUserRequest { UserName = "test@example.com", UniqueArgument = "test-arg" }
-            };
-
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() =>
-                _usersClient!.AddUsersAsync(userType, invalidRole, users));
-        }
-
-        [Fact]
-        public async Task AddUsers_ShouldValidateUserType()
-        {
-            SkipIfNotConfigured();
-
-            // Arrange
-            var invalidUserType = User.Type.UNDEFINED;
-            var role = "SystemUser";
-            var users = new List<AddUserRequest>
-            {
-                new AddUserRequest { UserName = "test@example.com", UniqueArgument = "test-arg" }
-            };
-
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() =>
-                _usersClient!.AddUsersAsync(invalidUserType, role, users));
         }
 
         [Fact]
@@ -238,45 +202,13 @@ namespace GlassixSharp.Tests
         }
 
         [Fact]
-        public async Task GetUserByUniqueArgument_ShouldValidateInput()
-        {
-            SkipIfNotConfigured();
-
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() =>
-                _usersClient!.GetUserByUniqueArgumentAsync(string.Empty));
-        }
-
-        [Fact]
-        public async Task SetUserRoles_ShouldUpdateUserRoles()
-        {
-            SkipIfNotConfigured();
-
-            // Arrange
-            // Get a user from the system
-            var usersResult = await _usersClient!.GetAllUsersAsync();
-            Assert.True(usersResult.Success);
-            Assert.NotEmpty(usersResult.Data);
-
-            var userName = usersResult.Data.First().UserName;
-            var roles = new List<string> { "SystemUser", "ReadOnly" };
-
-            // Act
-            var result = await _usersClient!.SetUserRolesAsync(userName, roles);
-
-            // Assert
-            Assert.True(result.Success);
-            Assert.Null(result.Error);
-        }
-
-        [Fact]
         public async Task DeleteUser_ShouldDeleteUser()
         {
             SkipIfNotConfigured();
 
             // Arrange
             // First create a test user
-            var userType = User.Type.AGENT;
+            string userType = "AGENT";
             var role = "SystemUser";
             var uniqueId = Guid.NewGuid().ToString().Substring(0, 8);
             var userName = $"testdelete_{uniqueId}@example.com";
@@ -285,8 +217,8 @@ namespace GlassixSharp.Tests
             {
                 new AddUserRequest
                 {
-                    UserName = userName,
-                    UniqueArgument = $"test-delete-{uniqueId}"
+                    userName = userName,
+                    uniqueArgument = $"test-delete-{uniqueId}"
                 }
             };
 

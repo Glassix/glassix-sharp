@@ -23,6 +23,8 @@ namespace GlassixSharp.Protocols
         /// <returns>The sent message</returns>
         public async Task<(bool Success, Message Data, string Error)> SendProtocolMessageAsync(Message request, CancellationToken cancellationToken = default)
         {
+            request.status = "Pending";
+
             var response = await SendRequestAsync<Message>(
                 HttpMethod.Post,
                 $"{_baseUrl}/protocols/send",

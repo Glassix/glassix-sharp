@@ -40,24 +40,22 @@ namespace GlassixSharp.Webhooks
         /// <param name="queueMessageId">Queue message ID of the webhook event</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Result of the operation</returns>
-        public async Task<(bool Success, string Error)> DeleteWebhookEventsAsync(string queueReceiptHandle, string queueMessageId, CancellationToken cancellationToken = default)
+        public async Task<(bool Success, string Error)> DeleteWebhookEventsAsync(List<WebhookEvent> webhookEvents, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(queueReceiptHandle))
-                throw new ArgumentNullException(nameof(queueReceiptHandle));
-
-            if (string.IsNullOrEmpty(queueMessageId))
-                throw new ArgumentNullException(nameof(queueMessageId));
-
-            var requestBody = new
+            if(webhookEvents.Count == 0)
             {
-                queueReceiptHandle = queueReceiptHandle,
-                queueMessageId = queueMessageId
-            };
+                throw new ArgumentException("webhookEvents cannot be empty", nameof(webhookEvents));
+            }
+
+            if (webhookEvents.Any(x => string.IsNullOrEmpty(x.queueReceiptHandle) || string.IsNullOrEmpty(x.queueMessageId)))
+            {
+                throw new ArgumentException("queueReceiptHandle and queueMessageId cannot be null or empty", nameof(webhookEvents));
+            }
 
             var response = await SendRequestAsync<EmptyResponse>(
                 HttpMethod.Post,
                 $"{_baseUrl}/webhooks/deleteevents",
-                requestBody,
+                webhookEvents,
                 true,
                 cancellationToken).ConfigureAwait(false);
 
