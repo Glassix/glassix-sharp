@@ -1,7 +1,6 @@
 # GlassixSharp
 
 [![NuGet](https://img.shields.io/nuget/v/GlassixSharp.svg)](https://www.nuget.org/packages/GlassixSharp/)
-[![License](https://img.shields.io/github/license/glassix/GlassixSharp.svg)](https://github.com/glassix/GlassixSharp/blob/main/LICENSE)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/glassix/GlassixSharp/build.yml?branch=main)](https://github.com/glassix/GlassixSharp/actions)
 
 A simple C# SDK for the Glassix API. This SDK makes it easy to interact with the [Glassix](https://www.glassix.com/) messaging platform.
