@@ -353,7 +353,7 @@ public async Task<IActionResult> Events(List<WebhookEvent> events)
 {
 	var headers = this.Request.Headers.Keys.ToDictionary(key => key, key => this.Request.Headers[key]);
 	
-	if(!_webhooksClient.IsRequestValid(headers))
+	if(!webhooksClient.IsRequestValid(headers))
 	{
 		return Unauthorized();
 	}
