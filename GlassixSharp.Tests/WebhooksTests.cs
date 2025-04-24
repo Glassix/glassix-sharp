@@ -42,5 +42,29 @@ namespace GlassixSharp.Tests
             Assert.True(result.Success);
             Assert.Null(result.Error);
         }
+
+        [Fact]
+        public void IsRequestValid_WithValidHeaders_ShouldReturnTrue()
+        {
+            SkipIfNotConfigured();
+
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "X-Glassix-Auth", Environment.GetEnvironmentVariable("WEBHOOKS_HEADER_X_GLASSIX_AUTH") },
+                { "X-Glassix-Auth-Date", Environment.GetEnvironmentVariable("WEBHOOKS_HEADER_X_GLASSIX_AUTH_DATE") },
+                { "X-Glassix-Api-Key", Environment.GetEnvironmentVariable("API_KEY")?.ToLower() },
+                { "X-Glassix-Request-Count", "1" }
+            };
+
+            // Create a mock of the expected hash with our test API Secret
+            // Note: For the test to pass, the hash must match what would be generated
+            // with the API Secret used in the test configuration
+
+            // Act
+            bool isValid = _webhooksClient!.IsRequestValid(headers);
+
+            // Assert
+            Assert.True(isValid);
+        }
     }
 } 
