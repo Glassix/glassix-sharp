@@ -345,6 +345,21 @@ var (success, events, error) = await webhooksClient.GetWebhookEventsAsync(delete
 // Delete webhook events
 // Documentation: https://docs.glassix.com/reference/delete-event
 var (deleteSuccess, deleteError) = await webhooksClient.DeleteWebhookEventsAsync(events);
+
+// Validate incoming webhooks requests
+// Documentation: https://docs.glassix.com/docs/validate-outbound-webhooks-and-api#/testing-x-glassix-auth-signature-validation
+[HttpPost]
+public async Task<IActionResult> Events(List<WebhookEvent> events)
+{
+	var headers = this.Request.Headers.Keys.ToDictionary(key => key, key => this.Request.Headers[key]);
+	
+	if(!_webhooksClient.IsRequestValid(headers))
+	{
+		return Unauthorized();
+	}
+
+	// Your rest of the code here
+}
 ```
 
 ### Working with Tenants

@@ -22,7 +22,7 @@ namespace GlassixSharp.Tests
 
             // Arrange
             var since = DateTime.UtcNow.AddDays(-7);
-            var until = DateTime.UtcNow;
+            var until = DateTime.UtcNow.AddDays(-1);
 
             // Act
             var result = await _ticketsClient!.ListTicketsAsync(since, until);
