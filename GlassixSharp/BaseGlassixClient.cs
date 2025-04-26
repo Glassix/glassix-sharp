@@ -13,7 +13,7 @@ namespace GlassixSharp
 {
     public abstract class BaseGlassixClient
     {
-        protected static readonly HttpClient _httpClient;
+        protected readonly HttpClient _httpClient;
         protected readonly string _baseUrl;
         protected readonly Credentials _credentials;
 
@@ -21,11 +21,11 @@ namespace GlassixSharp
         protected static readonly ConcurrentDictionary<string, (string Token, DateTime ExpiresAt)> _tokens = new ConcurrentDictionary<string, (string, DateTime)>();
         protected static readonly SemaphoreSlim _tokenSemaphore = new SemaphoreSlim(1, 1);
 
-        static BaseGlassixClient()
-        {
-            _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        }
+        // static BaseGlassixClient()
+        // {
+        //     _httpClient = new HttpClient();
+        //     _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        // }
 
         /// <summary>
         /// Creates a new instance of the GlassixSharp client
@@ -43,6 +43,8 @@ namespace GlassixSharp
             }
             _baseUrl = $"https://{_credentials.WorkspaceName}.{glassixDomain}/api/v1.2";
 
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             if (_credentials.TimeoutSeconds > 0)
             {
                 _httpClient.Timeout = TimeSpan.FromSeconds(_credentials.TimeoutSeconds);
