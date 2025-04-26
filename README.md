@@ -1,26 +1,28 @@
 # GlassixSharp
 
 [![NuGet](https://img.shields.io/nuget/v/GlassixSharp.svg)](https://www.nuget.org/packages/GlassixSharp/)
-[![License](https://img.shields.io/github/license/glassix/GlassixSharp.svg)](https://github.com/glassix/GlassixSharp/blob/main/LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/glassix/GlassixSharp/build.yml?branch=main)](https://github.com/glassix/GlassixSharp/actions)
+[![License](https://img.shields.io/github/license/glassix/glassix-sharp.svg)](https://github.com/Glassix/glassix-sharp/blob/master/LICENSE.txt)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/glassix/glassix-sharp/release.yml?branch=master)](https://github.com/glassix/GlassixSharp/actions)
 
 A simple C# SDK for the Glassix API. This SDK makes it easy to interact with the [Glassix](https://www.glassix.com/) messaging platform.
 
 ## Table of Contents
 
-- [Features](#features)
-- [Installation](#installation)
-- [Getting Started](#getting-started)
-- [Examples](#examples)
-  - [Working with Tickets](#working-with-tickets)
-  - [Working with Users](#working-with-users)
-  - [Working with Contacts](#working-with-contacts)
-  - [Sending Protocol Messages](#sending-protocol-messages)
-  - [Working with Webhooks](#working-with-webhooks)
-  - [Working with Tenants](#working-with-tenants)
-  - [Working with Canned Replies](#working-with-canned-replies)
-- [Documentation](#documentation)
-- [License](#license)
+- [GlassixSharp](#glassixsharp)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Installation](#installation)
+  - [Getting Started](#getting-started)
+  - [Examples](#examples)
+    - [Working with Tickets](#working-with-tickets)
+    - [Working with Users](#working-with-users)
+    - [Working with Contacts](#working-with-contacts)
+    - [Sending Protocol Messages](#sending-protocol-messages)
+    - [Working with Webhooks](#working-with-webhooks)
+    - [Working with Tenants](#working-with-tenants)
+    - [Working with Canned Replies](#working-with-canned-replies)
+  - [Documentation](#documentation)
+  - [License](#license)
 
 ## Features
 
@@ -32,7 +34,9 @@ A simple C# SDK for the Glassix API. This SDK makes it easy to interact with the
 - Modular client architecture with specialized clients for different API areas
 
 ## Installation
+
 GlassixSharp requires .NET 9.0 or higher.
+
 ```
 dotnet add package GlassixSharp
 ```
@@ -44,9 +48,9 @@ Initialize the clients with your Glassix credentials:
 ```csharp
 // https://docs.glassix.com/reference/access-token
 Credentials credentials = new Credentials(
-    workspaceName: "your-workspace", 
-    userName: "your-email@example.com", 
-    apiKey: Guid.Parse("your-api-key"), 
+    workspaceName: "your-workspace",
+    userName: "your-email@example.com",
+    apiKey: Guid.Parse("your-api-key"),
     apiSecret: "your-api-secret"
 );
 
@@ -103,8 +107,8 @@ var since = DateTime.UtcNow.AddDays(-7);
 var until = DateTime.UtcNow;
 
 var (listSuccess, ticketList, listError) = await ticketsClient.ListTicketsAsync(
-    since, 
-    until, 
+    since,
+    until,
     ticketState: Ticket.State.Open,
     sortOrder: SortOrder.Descending
 );
@@ -352,7 +356,7 @@ var (deleteSuccess, deleteError) = await webhooksClient.DeleteWebhookEventsAsync
 public async Task<IActionResult> Events(List<WebhookEvent> events)
 {
 	var headers = this.Request.Headers.Keys.ToDictionary(key => key, key => this.Request.Headers[key]);
-	
+
 	if(!webhooksClient.IsRequestValid(headers))
 	{
 		return Unauthorized();
@@ -391,4 +395,4 @@ For complete documentation on the Glassix API, please visit the [Glassix API Ref
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the Apache License - see the LICENSE file for details.
