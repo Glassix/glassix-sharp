@@ -23,11 +23,11 @@ namespace GlassixSharp
         protected static readonly ConcurrentDictionary<string, (string Token, DateTime ExpiresAt)> _tokens = new ConcurrentDictionary<string, (string, DateTime)>();
         protected static readonly SemaphoreSlim _tokenSemaphore = new SemaphoreSlim(1, 1);
 
-        // static BaseGlassixClient()
-        // {
-        //     _httpClient = new HttpClient();
-        //     _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        // }
+        static BaseGlassixClient()
+        {
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
 
         /// <summary>
         /// Creates a new instance of the GlassixSharp client
