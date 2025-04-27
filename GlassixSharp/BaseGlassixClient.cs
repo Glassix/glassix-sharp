@@ -45,8 +45,8 @@ namespace GlassixSharp
             }
             _baseUrl = $"https://{_credentials.WorkspaceName}.{glassixDomain}/api/v1.2";
 
-            
-            if(!wasHttpInitialized)
+
+            if (!wasHttpInitialized)
             {
                 if (_credentials.TimeoutSeconds > 0)
                 {

@@ -1,0 +1,25 @@
+<Project>
+  <!-- Properties in this file are expected to be identical for all Glassix organization projects. If
+   a property value is project-specific, please record it in the CSPROJ file instead. -->
+  <Import Project="$(MSBuildThisFileDirectory)Directory.Version.props" />
+  <PropertyGroup>
+    <!-- <Version>0.0.1</Version> -->
+    <Authors>Yoad Rashty</Authors>
+    <Company>Glassix</Company>
+    <Product>GlassixSharp</Product>
+    <Title>GlassixSharp</Title>
+    <Copyright>Copyright © Glassix 2025</Copyright>
+    <PackageTags>Glassix; GlassixSDK; GlassixSharp</PackageTags>
+    <PackageProjectUrl>https://github.com/Glassix/glassix-sharp</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/Glassix/glassix-sharp</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Description>
+      A simple C# SDK for the Glassix API. This SDK makes it easy to interact with the Glassix messaging platform.
+      Glassix API Reference - https://docs.glassix.com/reference
+    </Description>
+  </PropertyGroup>
+</Project>
