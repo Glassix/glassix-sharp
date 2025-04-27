@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace GlassixSharp
 {
@@ -16,6 +17,7 @@ namespace GlassixSharp
         protected static readonly HttpClient _httpClient;
         protected readonly string _baseUrl;
         protected readonly Credentials _credentials;
+        private static bool wasHttpInitialized = false;
 
         protected readonly Dictionary<string, string> _customHeaders = new Dictionary<string, string>();
         protected static readonly ConcurrentDictionary<string, (string Token, DateTime ExpiresAt)> _tokens = new ConcurrentDictionary<string, (string, DateTime)>();
@@ -43,10 +45,16 @@ namespace GlassixSharp
             }
             _baseUrl = $"https://{_credentials.WorkspaceName}.{glassixDomain}/api/v1.2";
 
-            if (_credentials.TimeoutSeconds > 0)
+            
+            if(!wasHttpInitialized)
             {
-                _httpClient.Timeout = TimeSpan.FromSeconds(_credentials.TimeoutSeconds);
+                if (_credentials.TimeoutSeconds > 0)
+                {
+                    _httpClient.Timeout = TimeSpan.FromSeconds(_credentials.TimeoutSeconds);
+                }
             }
+
+            wasHttpInitialized = true;
 
             if (headers != null)
             {
