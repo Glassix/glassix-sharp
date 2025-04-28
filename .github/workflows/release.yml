@@ -6,6 +6,7 @@ on:
     paths:
       - "GlassixSharp/**"
       - "GlassixSharp.sln"
+      - "Directory.*"
 
 env:
   CI_BUILD_NUMBER_BASE: ${{ github.run_number }}
