@@ -2,6 +2,10 @@ name: Build and Test
 
 on:
   push:
+    branches:
+      - "**"
+      - "!master"
+      # Ignore changes to README and LICENSE files
 jobs:
   build-and-test:
     name: Build and Test

@@ -3,6 +3,9 @@ name: Release
 on:
   push:
     branches: ["master"]
+    paths:
+      - "GlassixSharp/**"
+      - "GlassixSharp.sln"
 
 env:
   CI_BUILD_NUMBER_BASE: ${{ github.run_number }}
